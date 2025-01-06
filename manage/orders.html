@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" class="hydrated">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="title"></title>
+    <link href="./favicon.png" rel="icon" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="./js/static.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="./css/all.css">
+    <link rel="stylesheet" href="./css/alll.css">
+
+</head>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="./js/NotoSansArabicBase64.js"></script>
+<script src="./js/inithialize-firebase.js"></script>
+<script>
+    function checkAuthAndRedirect() {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in, continue to the page
+                //  console.log("User is signed in:", user.email);
+            } else {
+                // No user is signed in, redirect to login page
+                // console.log("User is not signed in, redirecting to login page...");
+                window.location.href = './index.html'; // Adjust the URL as needed
+            }
+        });
+    }
+</script>
+<script src="./js/Logout.js"></script>
+
+<body id="top" onload="checkAuthAndRedirect()">
+    <main>
+        <div class="formbold-form-wrapper">
+            <div class="mb-20 flex align-items space-between">
+                <div class="profile-icon profile-icon-img" onclick="toggleDropdown()">
+                    <!-- <span><i class="bi bi-diagram-3"></i></span> -->
+                    <div id="dropdown" class="dropdown-menu">
+                        <a href="./main.html" class="center align-items"><i class="bi bi-house-door mr-5"></i> Home
+                        </a>
+                        <a href="./profile.html" class="center align-items"><i class="bi bi-person-circle mr-5"></i>
+                            Profile</a>
+                        <a href="#settings" class="center align-items"><i class="bi bi-gear-fill mr-5"></i> Settings</a>
+                        <a href="#logout" id="logoutLink" class="center align-items"><i
+                                class="bi bi-box-arrow-left mr-5"></i>
+                            Logout</a>
+                    </div>
+                </div>
+                <div>
+                    <label class="day-night">
+                        <input type="checkbox" checked />
+                        <div></div>
+                    </label>
+                </div>
+            </div>
+            <div class="flex center flex-wrap" id="orders-info">
+                <div class="flex flex-wrap center">
+                    <div class="card mb-20 height-max-content padding-15 ">
+
+                        <h3>Total orders</h3>
+                        <p class="break-word" id="Total-orders"></p>
+                        <div class="shine"></div>
+
+                    </div>
+                </div>
+                <div class="flex flex-wrap center">
+                    <div id="show-pending-btn" class="card mb-20 height-max-content padding-15 border-top-y"
+                        onclick="showpendingOrders()">
+
+                        <h3>pending orders</h3>
+                        <p class="break-word" id="Pending-orders"></p>
+                        <div class="shine"></div>
+
+                    </div>
+                </div>
+                <div class="flex flex-wrap center">
+                    <div id="show-completed-btn" class="card mb-20 height-max-content padding-15 border-top-g"
+                        onclick="showCompletedOrders()">
+
+                        <h3>Completed orders</h3>
+                        <p class="break-word" id="Completed-orders"></p>
+                        <div class="shine"></div>
+
+                    </div>
+                </div>
+                <div class="flex flex-wrap center">
+                    <div id="show-canceled-btn" class="card mb-20 height-max-content padding-15 border-top-r"
+                        onclick="showCanceledOrders()">
+                        <h3>Canceld orders</h3>
+                        <p class="break-word" id="Canceld-orders"></p>
+                        <div class="shine"></div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="flex center mb-20 flex-wrap mt-40">
+                <div class="m-LR-2 flex align-items mb-10" style="width:fit-content;margin-right: 5px;">
+                    <div class="shadow">
+                        <select style="font-size: small !important;font-style: normal;" name="category" id="category"
+                            class="formbold-form-input">
+                            <option value="men">Order-ID</option>
+                            <option value="women">Email</option>
+                            <option value="kids">Phone-num</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-wrapper ">
+                    <input type="text" class="formbold-form-input w-300" id="product-id-input-del"
+                        placeholder="Search among orders">
+                    <button id="sub-btn-del" type="button" class="h-44 " onclick="">
+                        <div id="sub-txt-del">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <div id="sub-spin-del" class="spinner-sm hidden"></div>
+                    </button>
+                </div>
+            </div>
+            <!-- <div class="flex center mt-18 mb-20">
+                <button id="show-pending-btn" class="m-LR-2 flex center align-items btn-3"
+                    onclick="showpendingOrders()">
+                    <p class="white">pending Orders</p>
+                </button>
+                <button id="show-completed-btn" class="m-LR-2 flex center align-items btn-3"
+                    onclick="showCompletedOrders()">
+                    <p class="white">Completed Orders</p>
+                </button>
+                <button id="show-canceled-btn" class="m-LR-2 flex center align-items btn-3"
+                    onclick="showCanceledOrders()">
+                    <p class="white">Canceled Orders</p>
+                </button>
+            </div> -->
+            <div id="pending-orders-section" class="mb-20">
+                <div class="flex center mb-20">
+                    Pending orders
+                </div>
+                <div class="flex flex-wrap center overflow-y">
+                    <section class="overflow border-div-table c8080800a radius-15">
+                        <div class="tbl-header">
+                            <table cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th class="w-300">Email</th>
+                                        <th>City</th>
+                                        <th>ِaddress</th>
+                                        <th>Phone Number</th>
+                                        <th>Telephone Number</th>
+                                        <th>Shipping Fees</th>
+                                        <th>Total Price</th>
+                                        <th class="textalign w-500">More</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div id="orders-content" class="tbl-content">
+                            <div id="preloader" class="preloader hidden">
+                                <div class="spinner"></div>
+                            </div>
+
+                            <table cellpadding="0" cellspacing="0">
+                                <tbody id="orders-table-body">
+                                    <!-- Data will be inserted here by JavaScript -->
+                                </tbody>
+                            </table>
+                            <script>
+
+                            </script>
+
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div id="completed-orders-section" class=" mb-20 hidden">
+                <div class="flex center mb-20">
+                    Completed orders
+                </div>
+                <div class="flex flex-wrap center overflow-y">
+                    <section class="overflow border-div-table c8080800a radius-15">
+                        <div class="tbl-header">
+                            <table cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th class="w-300">Email</th>
+                                        <th>City</th>
+                                        <th>ِaddress</th>
+                                        <th>Phone Number</th>
+                                        <th>Telephone Number</th>
+                                        <th>Shipping Fees</th>
+                                        <th>Total Price</th>
+                                        <th class="textalign w-500">More</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div id="completed-orders-content" class="tbl-content">
+                            <div id="preloader" class="preloader hidden">
+                                <div class="spinner"></div>
+                            </div>
+
+                            <table cellpadding="0" cellspacing="0">
+                                <tbody id="completed-orders-table-body">
+                                    <!-- Data will be inserted here by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div id="Canceled-orders-section" class="mb-20 hidden">
+                <div class="flex center mb-20">
+                    Canceled orders
+                </div>
+                <div class="flex flex-wrap center overflow-y">
+                    <section class="overflow border-div-table c8080800a radius-15">
+                        <div class="tbl-header">
+                            <table cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th class="w-300">Email</th>
+                                        <th>City</th>
+                                        <th>ِaddress</th>
+                                        <th>Phone Number</th>
+                                        <th>Telephone Number</th>
+                                        <th>Shipping Fees</th>
+                                        <th>Total Price</th>
+                                        <th class="textalign w-500">More</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div id="Canceled-orders-content" class="tbl-content">
+                            <div id="preloader" class="preloader hidden">
+                                <div class="spinner"></div>
+                            </div>
+
+                            <table cellpadding="0" cellspacing="0">
+                                <tbody id="Canceled-orders-table-body">
+                                    <!-- Data will be inserted here by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="flex center mt-18">
+                <button id="report-btn" class="m-LR-2 flex center align-items btn-3">
+                    <p class="white mr-5i">Report a problem</p>
+                    <i class="bi bi-megaphone"></i>
+                </button>
+                <button class="m-LR-2 flex center align-items btn-3">
+                    <p class="white mr-5i">Delete all Orders</p>
+                    <i class="bi bi-shield-x"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Structure -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div id="caption"></div>
+    </div>
+
+    <script src="./js/orders.js"></script>
+    <script src="./js/printer.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to show pending orders section
+        // Function to show pending orders section and highlight the button
+        function showpendingOrders() {
+            document.getElementById('pending-orders-section').classList.remove('hidden');
+            document.getElementById('completed-orders-section').classList.add('hidden');
+            document.getElementById('Canceled-orders-section').classList.add('hidden');
+
+
+
+            // Update button styles
+            document.getElementById('show-pending-btn').style.backgroundColor = '#6a64f142';
+            document.getElementById('show-completed-btn').style.backgroundColor = '';
+            document.getElementById('show-canceled-btn').style.backgroundColor = '';
+
+
+        }
+        function showCompletedOrders() {
+            const completedOrdersSection = document.getElementById('completed-orders-section');
+            const completedOrdersTableBody = document.getElementById('completed-orders-table-body');
+            const pendingOrdersSection = document.getElementById('pending-orders-section');
+            const canceledOrdersSection = document.getElementById('Canceled-orders-section');
+
+            // Toggle visibility
+            pendingOrdersSection.classList.add('hidden');
+            completedOrdersSection.classList.remove('hidden');
+            canceledOrdersSection.classList.add('hidden');
+
+            // Update button styles
+            document.getElementById('show-pending-btn').style.backgroundColor = '';
+            document.getElementById('show-completed-btn').style.backgroundColor = '#6a64f142';
+            document.getElementById('show-canceled-btn').style.backgroundColor = '';
+
+            // Check if the completed orders table is empty
+
+        }
+        function showCanceledOrders() {
+            const canceledOrdersSection = document.getElementById('Canceled-orders-section');
+            const canceledOrdersTableBody = document.getElementById('Canceled-orders-table-body');
+            const pendingOrdersSection = document.getElementById('pending-orders-section');
+            const completedOrdersSection = document.getElementById('completed-orders-section');
+
+            // Toggle visibility
+            pendingOrdersSection.classList.add('hidden');
+            completedOrdersSection.classList.add('hidden');
+            canceledOrdersSection.classList.remove('hidden');
+
+            // Update button styles
+            document.getElementById('show-pending-btn').style.backgroundColor = '';
+            document.getElementById('show-completed-btn').style.backgroundColor = '';
+            document.getElementById('show-canceled-btn').style.backgroundColor = '#6a64f142';
+
+            // Check if the canceled orders table is empty
+
+        }
+
+        $(document).ready(function () {
+            // Search functionality for all three sections
+            $('#sub-btn-del').click(function () {
+                const searchType = $('#category').val(); // Get selected search type
+                const searchValue = $('#product-id-input-del').val().toLowerCase(); // Get the search input value
+
+                if (searchValue === "") {
+                    // Show SweetAlert with no confirm button
+                    Swal.fire({
+                        title: "Please enter a search term.",
+                        icon: "warning",
+                        showConfirmButton: false,
+                        timer: 1500,  // Automatically closes after 1.5 seconds
+                    });
+                    return;
+                }
+
+                let found = false;
+
+                // Hide all rows initially
+                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').hide();
+                $('#pending-orders-section, #completed-orders-section, #Canceled-orders-section').addClass('hidden');
+
+                // Determine where to search based on the selected type
+                let columnIndex;
+                switch (searchType) {
+                    case "men": // Order-ID
+                        columnIndex = 0;
+                        break;
+                    case "women": // Email
+                        columnIndex = 2;
+                        break;
+                    case "kids": // Phone-num
+                        columnIndex = 5;
+                        break;
+                    default:
+                        return;
+                }
+
+                // Search through each row in the tables
+                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').each(function () {
+                    const row = $(this);
+                    const cellValue = row.find('td').eq(columnIndex).text().toLowerCase();
+
+                    if (cellValue.includes(searchValue)) {
+                        row.show(); // Show only the rows that match
+                        found = true;
+
+                        // Show the section where the result is found
+                        if (row.closest('tbody').is('#orders-table-body')) {
+                            $('#pending-orders-section').removeClass('hidden');
+                            // Apply background color to the "Pending" button
+                            $('#show-pending-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
+                        } else if (row.closest('tbody').is('#completed-orders-table-body')) {
+                            $('#completed-orders-section').removeClass('hidden');
+                            // Apply background color to the "Completed" button
+                            $('#show-completed-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
+                        } else if (row.closest('tbody').is('#Canceled-orders-table-body')) {
+                            $('#Canceled-orders-section').removeClass('hidden');
+                            // Apply background color to the "Canceled" button
+                            $('#show-canceled-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
+                        }
+                    }
+                });
+
+                if (!found) {
+                    // Show SweetAlert with no confirm button
+                    Swal.fire({
+                        title: "No matching orders found.",
+                        icon: "info",
+                        showConfirmButton: false,
+                        timer: 1500,  // Automatically closes after 1.5 seconds
+                    });
+                }
+            });
+
+            // Reset search functionality when input changes
+            $('#product-id-input-del').on('input', function () {
+                const searchValue = $(this).val();
+
+                if (searchValue === "") {
+                    // Reset to show all orders (pending, completed, canceled)
+                    $('#orders-table-body tr').show();
+                    $('#completed-orders-table-body tr').show();
+                    $('#Canceled-orders-table-body tr').show();
+
+                    // Show all sections
+                    $('#pending-orders-section').addClass('hidden');
+                    $('#completed-orders-section').addClass('hidden');
+                    $('#Canceled-orders-section').addClass('hidden');
+
+                    $('#pending-orders-section').removeClass('hidden');
+
+                    // Reset button background colors
+                    $('#show-completed-btn,#show-pending-btn,#show-canceled-btn').css('background-color', '');
+
+                    // Clear the search input
+                    $('#product-id-input-del').val('');
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
