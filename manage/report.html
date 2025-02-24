@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
     <script src="./js/static.js"></script>
+    <script src="./js/toAll.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="./css/all.css">
     <link rel="stylesheet" href="./css/alll.css">
@@ -24,24 +25,7 @@
 
 
 <script src="./js/inithialize-firebase.js"></script>
-<script>
-
-    // Firebase initialization code as shown above
-
-    // Function to check if user is authenticated
-    function checkAuthAndRedirect() {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, continue to the page
-                //  console.log("User is signed in:", user.email);
-            } else {
-                // No user is signed in, redirect to login page
-                // console.log("User is not signed in, redirecting to login page...");
-                window.location.href = './index.html'; // Adjust the URL as needed
-            }
-        });
-    }
-</script>
+<script src="./js/checkUserAuthStatus.js"></script>
 <script src="./js/Logout.js"></script>
 
 <body id="top" onload="checkAuthAndRedirect()">
@@ -72,23 +56,27 @@
                 <form class="w-400" id="report-form">
                     <div class="formbold-input-group">
                         <label for="uid" class="formbold-form-label">UID</label>
-                        <input type="text" name="uid" id="uid" value="" readonly class="formbold-form-input shadow">
+                        <input type="text" name="uid" id="uid" value="" readonly
+                            class="formbold-form-input shadow border-15-3px">
                     </div>
                     <div class="formbold-input-group">
                         <label for="email" class="formbold-form-label">Your Email</label>
-                        <input type="text" name="email" id="email" value="" readonly class="formbold-form-input shadow">
+                        <input type="text" name="email" id="email" value="" readonly
+                            class="formbold-form-input shadow border-15-3px">
                     </div>
                     <div class="formbold-input-group">
                         <label for="reportdescription" class="formbold-form-label">Description</label>
                         <textarea rows="6" name="report-description" id="report-description"
                             placeholder="Describe the exact problem you're facing, and we will work on fixing it promptly"
-                            class="formbold-form-input shadow"></textarea>
+                            class="formbold-form-input shadow border-15-3px"></textarea>
                     </div>
-                    <button id="report-submit" type="submit"
-                        class="formbold-btn formbold-sub-btn flex center align-items">
-                        <div id="sub-txt">Submit</div>
-                        <div id="sub-spin" class="spinner-sm hidden"></div>
-                    </button>
+                    <div class="flex flex-end">
+                        <button id="report-submit" type="submit"
+                            class="formbold-btn formbold-sub-btn flex center align-items">
+                            <div id="sub-txt">Submit</div>
+                            <div id="sub-spin" class="spinner-sm hidden"></div>
+                        </button>
+                    </div>
                 </form>
 
 
@@ -132,17 +120,21 @@
             const uid = document.getElementById('uid').value;
             const email = document.getElementById('email').value;
             const description = document.getElementById('report-description').value;
+            const reportDateTime = getCurrentDateTime(); // Get current date & time
 
             // Validation: Check if all fields are filled
             if (!uid || !email || !description) {
                 Swal.fire({
+                    icon: 'warning',
                     title: 'Incomplete Form',
                     text: 'Please fill in all the fields before submitting.',
-                    icon: 'warning',
-                    timer: 2000,  // The alert will close automatically after 2 seconds
+                    toast: true,
+                    position: 'top-end', // Show in the top-right corner
+                    timer: 3000, // Auto-close after 3 seconds
+                    timerProgressBar: true,
                     showConfirmButton: false,
-                    backdrop: false
                 });
+
                 return; // Stop the submission
             }
 
@@ -160,7 +152,8 @@
                 const reportData = {
                     uid: uid,
                     name: email,
-                    "problem-description": description
+                    "problem-description": description,
+                    "report-date": reportDateTime
                 };
 
                 // Show spinner and disable the submit button to prevent multiple submissions
@@ -181,14 +174,16 @@
                 if (response.ok) {
                     // Show a SweetAlert with no accept button
                     Swal.fire({
+                        icon: 'success',
                         title: 'Report Submitted',
                         text: 'Your report has been submitted successfully!',
-                        icon: 'success',
-                        timer: 2000,  // The alert will close automatically after 2 seconds
+                        toast: true,
+                        position: 'top-end', // Show in the top right corner
+                        timer: 2000, // Auto-close after 2 seconds
+                        timerProgressBar: true,
                         showConfirmButton: false,
-                        backdrop: false
                     }).then(() => {
-                        // Reload the page after the alert closes
+                        // Reload the page after the toast disappears
                         location.reload();
                     });
 
@@ -198,12 +193,14 @@
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
+                    icon: 'error',
                     title: 'Error',
                     text: error.message || 'There was an issue submitting your report. Please try again.',
-                    icon: 'error',
-                    timer: 2000,
+                    toast: true,
+                    position: 'top-end', // Show in the top-right corner
+                    timer: 3000, // Auto-close after 3 seconds
+                    timerProgressBar: true,
                     showConfirmButton: false,
-                    backdrop: false
                 });
             } finally {
                 // Hide spinner and re-enable the submit button

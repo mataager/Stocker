@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
     <script src="./js/static.js"></script>
+    <script src="./js/preventClicks.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="./css/all.css">
     <link rel="stylesheet" href="./css/alll.css">
@@ -25,23 +26,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src="./js/NotoSansArabicBase64.js"></script>
 <script src="./js/inithialize-firebase.js"></script>
-<script>
-    function checkAuthAndRedirect() {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, continue to the page
-                //  console.log("User is signed in:", user.email);
-            } else {
-                // No user is signed in, redirect to login page
-                // console.log("User is not signed in, redirecting to login page...");
-                window.location.href = './index.html'; // Adjust the URL as needed
-            }
-        });
-    }
-</script>
+<script src="./js/checkUserAuthStatus.js"></script>
+<script src="./js/preventClicks.js"></script>
 <script src="./js/Logout.js"></script>
 
 <body id="top" onload="checkAuthAndRedirect()">
+
     <main>
         <div class="formbold-form-wrapper">
             <div class="mb-20 flex align-items space-between">
@@ -66,78 +56,64 @@
                 </div>
             </div>
             <div class="flex center flex-wrap" id="orders-info">
-                <div class="flex flex-wrap center hidden">
-                    <div class="card mb-20 height-max-content padding-15 ">
 
-                        <h3>Total orders</h3>
-                        <p class="break-word" id="Total-orders"></p>
+                <div class="flex flex-wrap center">
+                    <div id="show-completed-btn" onclick="showOrderSection('completed-orders-section')"
+                        class="card mb-20 height-max-content padding-15 border-top-g">
+                        <div class="flex align-items">
+                            <h3>Completed orders</h3>
+                        </div>
+                        <p class="break-word" id="completed-count"></p>
                         <div class="shine"></div>
 
                     </div>
-                </div>
-                <div class="flex flex-wrap center hidden">
-                    <div id="show-Shipped-btn" class="card mb-20 height-max-content padding-15 border-top-y"
-                        onclick="showpendingOrders()">
 
-                        <h3>pending orders</h3>
-                        <p class="break-word" id="Pending-orders"></p>
-                        <div class="shine"></div>
-
-                    </div>
                 </div>
                 <div class="flex flex-wrap center">
-                    <div id="show-completed-btn" class="card mb-20 height-max-content padding-15"
-                        onclick="showCompletedOrders()">
-
-                        <h3>Completed orders</h3>
-                        <p class="break-word" id="Completed-orders"></p>
-                        <div class="shine"></div>
-
-                    </div>
-                </div>
-                <div class="flex flex-wrap center">
-                    <div id="" class="card mb-20 height-max-content padding-15 border-top-g" onclick="">
+                    <div id="show-shipped-btn" onclick="showOrderSection('shipped-orders-section')"
+                        class="card mb-20 height-max-content padding-15 border-top-b">
 
                         <h3>Shipped orders</h3>
-                        <p class="break-word" id="Completed-orders"></p>
+                        <p class="break-word" id="shipped-count"></p>
                         <div class="shine"></div>
 
                     </div>
                 </div>
                 <div class="flex flex-wrap center">
-                    <div id="" class="card mb-20 height-max-content padding-15 border-top-g" onclick="">
+                    <div id="show-delivered-btn" onclick="showOrderSection('delivered-orders-section')"
+                        class="card mb-20 height-max-content padding-15 border-top-m">
 
-                        <h3>Returned orders</h3>
-                        <p class="break-word" id="Completed-orders"></p>
+                        <h3>Delivered orders</h3>
+                        <p class="break-word" id="delivered-count"></p>
                         <div class="shine"></div>
 
                     </div>
                 </div>
-                <div class="flex flex-wrap center hidden">
-                    <div id="show-Returned-btn" class="card mb-20 height-max-content padding-15 border-top-r"
-                        onclick="showCanceledOrders()">
-                        <h3>Canceld orders</h3>
-                        <p class="break-word" id="Canceld-orders"></p>
+                <div class="flex flex-wrap center ">
+                    <div id="show-returned-btn" onclick="showOrderSection('returned-orders-section')"
+                        class="card mb-20 height-max-content padding-15 border-top-o">
+                        <h3>Returned orders</h3>
+                        <p class="break-word" id="returned-count"></p>
                         <div class="shine"></div>
 
                     </div>
                 </div>
             </div>
             <div class="flex center mb-20 flex-wrap mt-40">
-                <div class="m-LR-2 flex align-items mb-10" style="width:fit-content;margin-right: 5px;">
+                <div class="m-LR-2 flex align-items" style="width:fit-content;margin-right: 5px;">
                     <div class="shadow">
                         <select style="font-size: small !important;font-style: normal;" name="category" id="category"
-                            class="formbold-form-input">
-                            <option value="men">Order-ID</option>
-                            <option value="women">Email</option>
-                            <option value="kids">Phone-num</option>
+                            class="formbold-form-input order-select">
+                            <option value="OrderID">Order-ID</option>
+                            <option value="Email">Email</option>
+                            <option value="Phone">Phone</option>
                         </select>
                     </div>
                 </div>
                 <div class="input-wrapper ">
-                    <input type="text" class="formbold-form-input w-300" id="product-id-input-del"
-                        placeholder="Search among orders">
-                    <button id="sub-btn-del" type="button" class="h-44 " onclick="">
+                    <input type="text" class="formbold-form-input w-300 formbold-form-input-border"
+                        id="product-id-input-del" placeholder="Search among orders">
+                    <button id="sub-btn-del" type="button" class="" onclick="">
                         <div id="sub-txt-del">
                             <i class="bi bi-search"></i>
                         </div>
@@ -146,122 +122,136 @@
                 </div>
             </div>
 
-            <div id="Completed-orders" class="mb-20">
-                <div class="flex center mb-20">Completed Orders</div>
-                <div class="flex flex-wrap center overflow-y">
+            <div class="mb-20">
+
+                <div class="flex flex-wrap center overflow-y relative">
+                    <div id="preloader-overlay">
+                        <div id="preventing-preloader" class="preloader">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
                     <!-- Main Completed Orders -->
-                    <section class="overflow border-div-table c8080800a radius-15">
-                        <div class="tbl-header">
-                            <table cellpadding="0" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th class="w-300">Email</th>
-                                        <th>City</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
-                                        <th>Telephone Number</th>
-                                        <th>Shipping Fees</th>
-                                        <th>Total Price</th>
-                                        <th class="textalign w-800">More</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div id="orders-content" class="tbl-content">
-                            <div id="preloader" class="preloader hidden">
-                                <div class="spinner"></div>
+                    <div id="completed-orders-section" class="mb-20 overflow">
+                        <div class="flex center mb-20 mt-20">Completed Orders</div>
+                        <section class="overflow border-div-table c8080800a radius-15">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th class="w-300">Email</th>
+                                            <th>City</th>
+                                            <th>Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Telephone Number</th>
+                                            <th>Shipping Fees</th>
+                                            <th>Total Price</th>
+                                            <th class="textalign w-800">More</th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
-                            <table cellpadding="0" cellspacing="0">
-                                <tbody id="completed-orders-table-body"></tbody>
-                            </table>
-                        </div>
-                    </section>
+                            <div id="orders-content" class="tbl-content">
+                                <div id="preloader" class="preloader hidden">
+                                    <div class="spinner"></div>
+                                </div>
+                                <table cellpadding="0" cellspacing="0">
+                                    <tbody id="completed-orders-table-body"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
 
                     <!-- Shipped Orders -->
-                    <div class="flex center mb-20 mt-20">Shipped Orders</div>
-                    <section class="overflow border-div-table c8080800a radius-15">
-                        <div class="tbl-header">
-                            <table cellpadding="0" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th class="w-300">Email</th>
-                                        <th>City</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
-                                        <th>Telephone Number</th>
-                                        <th>Shipping Fees</th>
-                                        <th>Total Price</th>
-                                        <th class="textalign w-800">More</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div class="tbl-content">
-                            <table cellpadding="0" cellspacing="0">
-                                <tbody id="shipped-orders-table-body"></tbody>
-                            </table>
-                        </div>
-                    </section>
+                    <div id="shipped-orders-section" class="mb-20 overflow hidden">
+                        <div class="flex center mb-20 mt-20">Shipped Orders</div>
+                        <section class="overflow border-div-table c8080800a radius-15">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th class="w-300">Email</th>
+                                            <th>City</th>
+                                            <th>Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Telephone Number</th>
+                                            <th>Shipping Fees</th>
+                                            <th>Total Price</th>
+                                            <th class="textalign w-800">More</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tbl-content">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tbody id="shipped-orders-table-body"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
 
                     <!-- Delivered Orders -->
-                    <div class="flex center mb-20 mt-20">Delivered Orders</div>
-                    <section class="overflow border-div-table c8080800a radius-15">
-                        <div class="tbl-header">
-                            <table cellpadding="0" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th class="w-300">Email</th>
-                                        <th>City</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
-                                        <th>Telephone Number</th>
-                                        <th>Shipping Fees</th>
-                                        <th>Total Price</th>
-                                        <th class="textalign w-800">More</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div class="tbl-content">
-                            <table cellpadding="0" cellspacing="0">
-                                <tbody id="delivered-orders-table-body"></tbody>
-                            </table>
-                        </div>
-                    </section>
+                    <div id="delivered-orders-section" class="mb-20 overflow hidden">
+                        <div class="flex center mb-20 mt-20">Delivered Orders</div>
+                        <section class="overflow border-div-table c8080800a radius-15">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th class="w-300">Email</th>
+                                            <th>City</th>
+                                            <th>Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Telephone Number</th>
+                                            <th>Shipping Fees</th>
+                                            <th>Total Price</th>
+                                            <th class="textalign w-800">More</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tbl-content">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tbody id="delivered-orders-table-body"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
 
                     <!-- Returned Orders -->
-                    <div class="flex center mb-20 mt-20">Returned Orders</div>
-                    <section class="overflow border-div-table c8080800a radius-15">
-                        <div class="tbl-header">
-                            <table cellpadding="0" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th class="w-300">Email</th>
-                                        <th>City</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
-                                        <th>Telephone Number</th>
-                                        <th>Shipping Fees</th>
-                                        <th>Total Price</th>
-                                        <th class="textalign w-800">More</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div class="tbl-content">
-                            <table cellpadding="0" cellspacing="0">
-                                <tbody id="returned-orders-table-body"></tbody>
-                            </table>
-                        </div>
-                    </section>
+                    <div id="returned-orders-section" class="mb-20 overflow hidden ">
+                        <div class="flex center mb-20 mt-20">Returned Orders</div>
+                        <section class="overflow border-div-table c8080800a radius-15">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th class="w-300">Email</th>
+                                            <th>City</th>
+                                            <th>Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Telephone Number</th>
+                                            <th>Shipping Fees</th>
+                                            <th>Total Price</th>
+                                            <th class="textalign w-800">More</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tbl-content">
+                                <table cellpadding="0" cellspacing="0">
+                                    <tbody id="returned-orders-table-body"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </div>
 
@@ -308,111 +298,30 @@
 
         }
 
-        $(document).ready(function () {
-            // Search functionality for all three sections
-            $('#sub-btn-del').click(function () {
-                const searchType = $('#category').val(); // Get selected search type
-                const searchValue = $('#product-id-input-del').val().toLowerCase(); // Get the search input value
-
-                if (searchValue === "") {
-                    // Show SweetAlert with no confirm button
-                    Swal.fire({
-                        title: "Please enter a search term.",
-                        icon: "warning",
-                        showConfirmButton: false,
-                        timer: 1500,  // Automatically closes after 1.5 seconds
-                    });
-                    return;
-                }
-
-                let found = false;
-
-                // Hide all rows initially
-                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').hide();
-                $('#pending-orders-section, #completed-orders-section, #Canceled-orders-section').addClass('hidden');
-
-                // Determine where to search based on the selected type
-                let columnIndex;
-                switch (searchType) {
-                    case "men": // Order-ID
-                        columnIndex = 0;
-                        break;
-                    case "women": // Email
-                        columnIndex = 2;
-                        break;
-                    case "kids": // Phone-num
-                        columnIndex = 5;
-                        break;
-                    default:
-                        return;
-                }
-
-                // Search through each row in the tables
-                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').each(function () {
-                    const row = $(this);
-                    const cellValue = row.find('td').eq(columnIndex).text().toLowerCase();
-
-                    if (cellValue.includes(searchValue)) {
-                        row.show(); // Show only the rows that match
-                        found = true;
-
-                        // Show the section where the result is found
-                        if (row.closest('tbody').is('#orders-table-body')) {
-                            $('#pending-orders-section').removeClass('hidden');
-                            // Apply background color to the "Pending" button
-                            $('#show-Shipped-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        } else if (row.closest('tbody').is('#completed-orders-table-body')) {
-                            $('#completed-orders-section').removeClass('hidden');
-                            // Apply background color to the "Completed" button
-                            $('#show-completed-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        } else if (row.closest('tbody').is('#Canceled-orders-table-body')) {
-                            $('#Canceled-orders-section').removeClass('hidden');
-                            // Apply background color to the "Canceled" button
-                            $('#show-Returned-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        }
-                    }
-                });
-
-                if (!found) {
-                    // Show SweetAlert with no confirm button
-                    Swal.fire({
-                        title: "No matching orders found.",
-                        icon: "info",
-                        showConfirmButton: false,
-                        timer: 1500,  // Automatically closes after 1.5 seconds
-                    });
-                }
-            });
-
-            // Reset search functionality when input changes
-            $('#product-id-input-del').on('input', function () {
-                const searchValue = $(this).val();
-
-                if (searchValue === "") {
-                    // Reset to show all orders (pending, completed, canceled)
-                    $('#orders-table-body tr').show();
-                    $('#completed-orders-table-body tr').show();
-                    $('#Canceled-orders-table-body tr').show();
-
-                    // Show all sections
-                    $('#pending-orders-section').addClass('hidden');
-                    $('#completed-orders-section').addClass('hidden');
-                    $('#Canceled-orders-section').addClass('hidden');
-
-                    $('#pending-orders-section').removeClass('hidden');
-
-                    // Reset button background colors
-                    $('#show-completed-btn,#show-Shipped-btn,#show-Returned-btn').css('background-color', '');
-
-                    // Clear the search input
-                    $('#product-id-input-del').val('');
-                }
-            });
-        });
 
     </script>
     <script src="./js/shipping.js"></script>
     <script src="./js/printer.js"></script>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function (event) {
+                const profileIcon = document.querySelector('.profile-icon');
+                const dropdown = document.getElementById('dropdown');
+                if (!profileIcon.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
+
+
+        });
+    </script>
 </body>
 
 </html>

@@ -21,25 +21,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="./js/static.js"></script>
     <script src="./js/inithialize-firebase.js"></script>
-    <script>
-
-        // Firebase initialization code as shown above
-
-        // Function to check if user is authenticated
-        function checkAuthAndRedirect() {
-            firebase.auth().onAuthStateChanged(user => {
-                if (user) {
-                    // User is signed in, continue to the page
-                    //console.log("User is signed in:", user.email);
-
-                } else {
-                    // No user is signed in, redirect to login page
-                    //  console.log("User is not signed in, redirecting to login page...");
-                    window.location.href = './index.html'; // Adjust the URL as needed
-                }
-            });
-        }
-    </script>
+    <script src="./js/checkUserAuthStatus.js"></script>
     <script src="./js/Logout.js"></script>
 </head>
 

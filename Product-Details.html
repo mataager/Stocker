@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="store-title"></title>
-    <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="./favicon.png" type="image/svg+xml">
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -25,6 +25,9 @@
     <script src="./assets/js/search-product.js"></script>
     <script src="./assets/js/image-error.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 </head>
 
@@ -61,14 +64,9 @@
                                         <a href="#" class="navbar-link" onclick="changeFrameSrc('About.html')">About</a>
                                     </li> -->
                 <li class="navbar-item">
-                    <div class="flex align-items justify-content-space-between">
-                        <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
-                        <a id="open-category" class="rotate open-category open-category-btn"><i
-                                class="bi bi-plus"></i></a>
-                    </div>
-
+                    <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                 </li>
-                <li class="navbar-item hidden" id="megamenu" data-mega-menu>
+                <li class="navbar-item" id="megamenu" style="display: none;" data-mega-menu>
                     <div class="flex align-items justify-content-space-between">
                         <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                         <a id="open-category" class="rotate open-category open-category-btn"><i
@@ -227,6 +225,7 @@
                             <div class="details-info p-20">
                                 <h5 id="BrandName" class="mb-10 m-5 pl-0 ml-10"></h5>
                                 <h2 id="productTitle" class="m-5 ml-auto mb-10 ml-10"></h2>
+                                <h5 id="hints" class="m-5 ml-auto mb-10 ml-10 hints"></h5>
                                 <p id="preprice" class="m-5 mb-10"></p>
                                 <p id="productPrice" class="m-5 mb-10"></p>
 
@@ -263,16 +262,19 @@
                                     </h5>
                                 </div>
 
-                                <div class="m-5 mb-10">
+                                <div class="m-5 mb-10 flex">
                                     <button id="addToCartButton" class="Add-to-Cart">Add
-                                        to Cart
-                                        <i class="bi"></i>
+                                        To Cart
+                                        <i class="bi bi-bag-plus"></i>
                                     </button>
+                                    <div id="addtofavouritediv" class="flex">
 
+                                    </div>
                                 </div>
+
                                 <div class="m-5 mb-10">
                                     <button id="showdetails" class="Add-to-Cart">Show Details
-                                        <i class="bi bi-info"></i>
+                                        <i class="bi bi-arrow-down-short"></i>
                                     </button>
                                 </div>
                                 <div id="details-section" class="m-5 mb-10 hidden">
@@ -411,18 +413,134 @@
             </div>
 
         </section>
+        <div id="modal-fav" class="modal">
+            <div id="modal-fav-content" class="fav-modal-content">
 
+            </div>
+        </div>
 
 
 
 
 
     </div>
-    <div class="flex center">
-        <a href="https://matager.online" target="_blank">
-            <img src="./assets/images/powerd by matager black.svg" width="100px">
-        </a>
-    </div>
+    <footer class="footer hidden">
+        <div class="footer-top section">
+            <div class="container">
+
+                <div class="footer-brand">
+
+                    <a href="#" class="logo">
+                        <img src="./assets/images/iicon.svg" width="160" height="50" alt="">
+                    </a>
+
+                    <ul class="social-list hidden">
+
+                        <li>
+                            <a href="#" class="social-link">
+                                <ion-icon name="logo-facebook" role="img" class="md hydrated"
+                                    aria-label="logo facebook"></ion-icon>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="social-link">
+                                <ion-icon name="logo-twitter" role="img" class="md hydrated"
+                                    aria-label="logo twitter"></ion-icon>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="social-link">
+                                <ion-icon name="logo-pinterest" role="img" class="md hydrated"
+                                    aria-label="logo pinterest"></ion-icon>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="social-link">
+                                <ion-icon name="logo-linkedin" role="img" class="md hydrated"
+                                    aria-label="logo linkedin"></ion-icon>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <div class="footer-end flex space-around">
+
+                    <ul class="footer-list">
+
+                        <li>
+                            <p class="footer-list-title">Contact Us</p>
+                        </li>
+
+                        <li>
+                            <a href="tel:" id="store-call" class="footer-link">
+                                <ion-icon name="call" role="img" class="md hydrated" aria-label="call"></ion-icon>
+                                <span id="store-number" class="footer-link-text"></span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="mailto:" id="store-email-link" class="footer-link">
+                                <ion-icon name="mail" role="img" class="md hydrated" aria-label="mail"></ion-icon>
+                                <span id="store-email" class="footer-link-text"></span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="footer-link" id="report-bug-btn">
+                                <ion-icon name="bug"></ion-icon>
+                                <span class="footer-link-text">Report a problem or a bug</span>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+
+                    <div class="footer-list">
+
+                        <p class="footer-list-title">Newsletter</p>
+
+                        <p class="newsletter-text">
+                            Send us your email to keeping up with our latest updates..
+                        </p>
+
+                        <form action="" class="newsletter-form">
+                            <input type="email" name="email" required="" placeholder="Email Address"
+                                class="newsletter-input">
+
+                            <button type="submit" class="btn2 btn-primary">Subscribe</button>
+                        </form>
+
+                    </div>
+                    <ul class="footer-list">
+                        <p class="footer-list-title">Matager</p>
+                        <li>
+                            <a href="https://matager.online/PrivacyPolicy.html" class="footer-link">
+                                <span class="footer-link-text">privacy policy</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://matager.online/Termsofservice.html" class="footer-link">
+                                <span class="footer-link-text">Terms of service</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="flex center">
+            <a href="https://matager.online" target="_blank">
+                <img src="./assets/images/powerd by matager black.svg" width="100px">
+            </a>
+        </div>
+    </footer>
 
 </main>
 <a href="#top" class="go-top-btn" data-go-top="">
@@ -430,6 +548,7 @@
 </a>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule="" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Get the current page URL and encode it for sharing
@@ -578,6 +697,64 @@
 
 
 </script>
+<script>
+    function initializeProductSelections() {
+        // Select the first measurement
+        const sizeOptions = document.querySelectorAll('.size-radio');
+        if (sizeOptions.length > 0) {
+            sizeOptions[0].click(); // Trigger a click event on the first size option
+        }
+
+        // Select the first color
+        const colorOptions = document.querySelectorAll('.color-option');
+        if (colorOptions.length > 0) {
+            const firstColorOption = colorOptions[0];
+            firstColorOption.click(); // Trigger a click event on the first color option
+
+            // Optionally update the product color text
+            const productColorElement = document.getElementById('product-color');
+            if (productColorElement) {
+                const colorName = firstColorOption.getAttribute('data-color-name');
+                productColorElement.textContent = colorName;
+            }
+        }
+
+        // Remove "Must choose a color" message if present
+        const colorHintText = document.getElementById('color-hint-text');
+        if (colorHintText) {
+            colorHintText.style.display = 'none';
+        }
+    }
+
+    // Function to handle size selection
+    function SizeRef(element) {
+        const selectedSize = element.querySelector('.size-value').textContent;
+        document.getElementById('product-Size').textContent = selectedSize;
+
+        // Update any size hints if necessary
+        const sizeHintText = document.getElementById('size-hint-text');
+        if (sizeHintText) {
+            sizeHintText.style.display = 'none';
+        }
+    }
+
+    // Function to handle color selection
+    function ColorRef(element) {
+        const selectedColor = element.getAttribute('data-color-name');
+        document.getElementById('product-color').textContent = selectedColor;
+
+        // Remove any color hint text
+        const colorHintText = document.getElementById('color-hint-text');
+        if (colorHintText) {
+            colorHintText.style.display = 'none';
+        }
+    }
+
+    // Example of calling the function on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeProductSelections();
+    });
+</script>
 
 <script>
 
@@ -596,6 +773,8 @@
 
                 // Elements to populate
                 const productTitleElement = document.getElementById('productTitle');
+                const hints = document.getElementById('hints');
+                // const freeshipping = document.getElementById('freeshipping-hint');
                 const productID = document.getElementById('productID');
                 const productImageElement = document.getElementById('productImage');
                 const productImage2Element = document.getElementById('productImage2');
@@ -611,13 +790,18 @@
                 const pieceElement = document.getElementById('piece');
                 const detailsElement = document.getElementById('product-details');
 
-                // Populate product details
                 BrandNameElement.innerText = productDetails["Brand-Name"];
                 BrandNameElement.classList.add("pointer");
                 BrandNameElement.setAttribute(
                     "onclick",
                     `brand('${productDetails["Brand-Name"]}')`
                 );
+                const addToFavouriteDiv = document.getElementById("addtofavouritediv");
+                addToFavouriteDiv.innerHTML = `
+                <button id="addtofavourite" class="Add-to-Cart" onclick="addfavouriteproduct('${key}')">
+                    <i class="bi bi-heart" style="font-size: small;"></i>
+                </button>
+            `;
 
 
                 productTitleElement.innerText = productDetails["product-title"];
@@ -638,6 +822,8 @@
                 });
 
 
+
+
                 // Calculate and display prices
                 const saleAmount = productDetails["sale-amount"];
                 const originalPrice = productDetails["Product-Price"];
@@ -647,8 +833,8 @@
                 let prePriceHTML = '';
                 let productPriceHTML = '';
 
+                const salePrice = calculateSalePrice(originalPrice, saleAmount);
                 if (saleAmount) {
-                    const salePrice = calculateSalePrice(originalPrice, saleAmount);
                     prePriceHTML = `<p id="preprice" class="m-5 mb-10"><del class="pre-sale">${originalPrice} EGP</del></p>`;
                     productPriceHTML = `<p id="productPrice" class="m-5 mb-10">${salePrice} EGP</p>`;
                 } else {
@@ -657,6 +843,31 @@
 
                 prePriceElement.innerHTML = prePriceHTML;
                 productPriceElement.innerHTML = productPriceHTML;
+
+
+
+                // Check if the product qualifies for free shipping
+                let freeShippingHTML = "";
+                if (salePrice >= parseInt(freeshipping, 10)) { // Parse freeshipping to an integer during comparison
+                    freeShippingHTML = `<div class="freeshipping-hint hint mb-10" id="free-shipping">
+        Free Shipping on this item<i class="bi bi-truck"></i>
+    </div>`;
+                }
+
+                // Check if the product is a best seller
+                const bestSellerHTML = productDetails["bestseller"]
+                    ? `<div class="best-seller-hint hint mb-10" id="best-seller">
+        Bestseller<i class="bi bi-lightning-charge"></i>
+    </div>`
+                    : "";
+
+                // Combine and populate hints
+                hints.innerHTML = `${bestSellerHTML}${freeShippingHTML}`;
+
+
+
+
+
 
                 // Get related products
                 const category = productDetails["category"];
@@ -752,6 +963,8 @@
                 }
 
                 checkAndToggleButton("product-Size", "product-color", "addToCartButton");
+                initializeProductSelections();
+
             })
             .catch((error) => {
                 console.error("Error fetching product details:", error);
@@ -1043,12 +1256,13 @@
         // Toggle the 'hidden' class on the details section
         if (detailsSection.classList.contains('hidden')) {
             detailsSection.classList.remove('hidden');
-            showDetailsButton.innerHTML = 'Hide Details <i class="bi bi-info"></i>';
+            showDetailsButton.innerHTML = 'Hide Details <i class="bi bi-arrow-up-short"></i>';
         } else {
             detailsSection.classList.add('hidden');
-            showDetailsButton.innerHTML = 'Show Details <i class="bi bi-info"></i>';
+            showDetailsButton.innerHTML = 'Show Details <i class="bi bi-arrow-down-short"></i>';
         }
     });
+
 
 
 </script>
@@ -1056,10 +1270,13 @@
 
 
 
+<script src="./assets/js/store-contact.js"></script>
 <script src="./assets/js/update-cart-amont.js"></script>
 <script src="./assets/js/route.js"></script>
 <script src="./assets/js/all.js"></script>
+<script src="./assets/js/report.js"></script>
 <script src="./assets/js/rendering-megamenu.js"></script>
 <script src="./assets/js/rendering-search.js"></script>
+<script src="./assets/js/addfavouriteproduct.js"></script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule="" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

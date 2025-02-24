@@ -24,7 +24,7 @@
     <!-- 
     - favicon
   -->
-    <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="./favicon.png" type="image/svg+xml">
 
     <!-- 
     - custom css link
@@ -39,6 +39,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&amp;family=Roboto:wght@400;500;700&amp;display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./assets/js/check-auth-user.js"></script>
@@ -82,14 +85,9 @@
                                         <a href="#" class="navbar-link" onclick="changeFrameSrc('About.html')">About</a>
                                     </li> -->
                 <li class="navbar-item">
-                    <div class="flex align-items justify-content-space-between">
-                        <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
-                        <a id="open-category" class="rotate open-category open-category-btn"><i
-                                class="bi bi-plus"></i></a>
-                    </div>
-
+                    <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                 </li>
-                <li class="navbar-item hidden" id="megamenu" data-mega-menu>
+                <li class="navbar-item" id="megamenu" style="display: none;" data-mega-menu>
                     <div class="flex align-items justify-content-space-between">
                         <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                         <a id="open-category" class="rotate open-category open-category-btn"><i
@@ -194,796 +192,512 @@
     </div>
 
     <div class="product-area" id="product-area">
-        <div class="progress-bar-container flex center">
-            <div class="progress-bar flex center">
-                <div class="step completed">
-                    <span class="step-number targeted-step w-h-auto" id="target-1" onclick="perv1()">
-                        <div class="flex center align-items p-4">
-                            <i class="bi bi-bag-check"></i>
-                        </div>
-                    </span>
-                    <span class="step-label">Cart</span>
-
-                </div>
-                <div id="connector1" class="connector"></div>
-                <div class="step completed">
-                    <span class="step-number w-h-auto" id="target-2">
-                        <div class="flex center align-items p-4" onclick="Next1()">
-                            <i class="bi bi-info-lg"></i>
-                        </div>
-                    </span>
-                    <span class="step-label">Information</span>
-                </div>
-                <div id="connector2" class="connector"></div>
-                <div class="step completed">
-                    <span class="step-number w-h-auto" id="target-3" onclick="Next2()">
-                        <div class="flex center align-items p-4">
-                            <i class="bi bi-list-check"></i>
-                        </div>
-                    </span>
-                    <span class="step-label">summary</span>
-                </div>
-                <div id="connector3" class="connector"></div>
-
-                <div class="step completed">
-                    <span class="step-number w-h-auto" id="target-4" onclick="Next3()">
-                        <div class="flex center align-items p-4">
-                            <i class="bi bi-credit-card"></i>
-                        </div>
-
-                    </span>
-                    <span class="step-label">Payment</span>
-                </div>
-
-            </div>
-
-        </div>
         <section class="section product p-0 mt-10">
-
             <div id="cart-card">
-                <div class="flex center flex-direction-column flex-start m-10 height-70 " id="Cart">
+                <div class="flex center flex-direction-column flex-start m-10" id="Cart">
                     <div class="m-10 flex center">
                         <h3>Shopping Cart</h3>
                     </div>
-                    <div class="m-10 cart-bg over-flow-auto box-with-shadow flex-direction-column available-height"
-                        id="cartarea">
+                    <div class="m-10 cart-bg  box-with-shadow flex-direction-column flex" id="cartarea">
                         <div class="flex center">
+                            <div class="over-flow-auto mt-20">
+                                <div class="flex baseline">
+                                    <div class="flex flex-direction-column align-items">
+                                        <h5 class="flex center mb-10">Cart Items</h5>
+                                        <div class="cart-sec">
+                                            <ul class="m-10-0-20-0" id="cart-items">
+                                            </ul>
+                                        </div>
+                                    </div>
 
-                            <ul id="cart-items">
+                                    <div class="address-sec">
+                                        <div>
+                                            <div class="mt-20">
+                                                <h5 class="flex center mb-10">Address</h5>
 
-                            </ul>
+                                                <div class="address-area" style="height: auto;">
 
-                            <script>
-                                document.addEventListener("DOMContentLoaded", () => {
-                                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                                    const cartList = document.getElementById("cart-items");
-                                    const cartArea = document.getElementById("cartarea");
-                                    let totalAmount = 0;
+                                                    <div class="preloader2" id="preloader2">
+                                                        <div class="loader2"></div>
+                                                    </div>
+                                                    <div class="address-area" id="address-area"></div>
 
-                                    // Function to check availability from Firebase database
-
-                                    function checkAvailability(itemId, productSize, productColor, requestedQuantity, callback) {
-                                        // Fetch the product data from Firebase database
-                                        fetch(`${url}/Stores/${uid}/Products/${itemId}.json`)
-                                            .then(response => response.json())
-                                            .then(productsData => {
-                                                let itemFound = false;
-                                                let availableQty = 0;
-
-                                                // Loop through the product data to find the correct item
-                                                for (const key in productsData.sizes) {
-                                                    if (key === productSize) {
-                                                        const sizeData = productsData.sizes[key];
-                                                        if (sizeData[productColor]) {
-                                                            const colorData = sizeData[productColor];
-                                                            availableQty = parseInt(colorData.qty, 10); // Get the available quantity
-                                                            const colorImage = colorData.img1 || productsData["product-photo"]; // Use color image or fallback to main product photo
-
-                                                            itemFound = true;
-
-                                                            // Check if the requested quantity is available
-                                                            if (requestedQuantity <= availableQty && requestedQuantity > 0) {
-                                                                callback(true, availableQty); // Proceed if available
-                                                            } else {
-                                                                // Insufficient stock, update to the available quantity in local storage
-                                                                Swal.fire({
-                                                                    icon: "warning",
-                                                                    html: `<div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="${colorImage}" alt="${productsData["product-title"]}" 
-                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" />
-                                        <span>Only ${availableQty} items available of this product</span>
-                                      </div>`,
-                                                                }).then(() => {
-                                                                    // Update the cart locally to the available quantity
-                                                                    updateLocalDbItemQuantity(itemId, availableQty);
-                                                                });
-
-                                                                callback(false, availableQty); // Insufficient stock, update local DB
-                                                            }
-
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-
-                                                if (!itemFound) {
-                                                    Swal.fire({
-                                                        icon: "error",
-                                                        title: "Item Not Found",
-                                                        text: "This item is no longer available.",
-                                                    });
-                                                    callback(false, availableQty); // Item not found
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error("Error checking availability:", error);
-                                                Swal.fire({
-                                                    icon: "error",
-                                                    title: "Error",
-                                                    text: "There was an error checking availability. Please try again later.",
-                                                });
-                                                callback(false, 0); // Error
-                                            });
-                                    }
+                                                </div>
+                                            </div>
 
 
-                                    function checkAndUpdateQuantities() {
-                                        cart.forEach((item) => {
-                                            checkAvailability(item.id, item.productSize, item.productColor, item.quantity, (isAvailable, availableQty) => {
-                                                if (!isAvailable) {
-                                                    // If not available, update the local storage item quantity
-                                                    updateLocalDbItemQuantity(item.id, availableQty);
-                                                }
-                                            });
-                                        });
-                                    }
 
-                                    // Function to update quantity in the cart
-                                    function updateQuantity(index, increment) {
-                                        const item = cart[index];
+                                        </div>
+                                    </div>
 
-                                        // Determine the requested quantity after increment or decrement
-                                        const requestedQuantity = item.quantity + increment;
+                                </div>
+                                <div class="flex center paymentandtotal">
+                                    <div class="flex center flex-direction-column payment-cart-div mt-20">
+                                        <div class="payment-section">
+                                            <h5>Payment Type</h5>
+                                            <div class="payment-options-container">
+                                                <div class="payment-options">
+                                                    <div class="payment-option selected" id="cod">
+                                                        <img src="./assets/icons/COD.jpg" alt="Cash on Delivery">
+                                                    </div>
+                                                    <div class="payment-option" id="card">
+                                                        <img src="./assets/icons/VISA.svg" alt="Card Payment">
+                                                    </div>
+                                                    <div class="payment-option" id="fawry">
+                                                        <img src="./assets/icons/Fawry.svg" alt="Fawry">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pagination-dots">
+                                                <span class="dot active" data-index="0"></span>
+                                                <span class="dot" data-index="1"></span>
+                                                <span class="dot" data-index="2"></span>
+                                            </div>
+                                        </div>
 
-                                        // Ensure the requested quantity is never less than 1
-                                        if (requestedQuantity < 1) {
-                                            return; // Prevent decrement below 1
-                                        }
+                                    </div>
 
-                                        // Check availability based on the updated requested quantity
-                                        checkAvailability(item.id, item.productSize, item.productColor, requestedQuantity, (isAvailable, availableQty) => {
-                                            if (isAvailable) {
-                                                // If the item is available and stock is sufficient, update the cart
-                                                item.quantity = requestedQuantity; // Update quantity based on the requested quantity
-                                                cart[index] = item;
+                                    <div class="flex center total-cart-div mt-20">
+                                        <h5 class="pb-30">Summary</h5>
+                                        <div class="flex center align-items font-small mb-10">
+                                            <h5>Cart Total :</h5><span id="cart-total" class="ml-3"></span>
+                                        </div>
+                                        <div class="flex center align-items font-small mb-10">
+                                            <h5>Shipping Fees :</h5><span id="shipping-fees-total" class="ml-3"></span>
+                                            <h5 id="shipping-fees" class="ml-3 hidden"></h5>
+                                        </div>
+                                        <div class="flex center align-items font-small mb-10">
+                                            <h5>Total Price :</h5><span id="total-price" class="ml-3"></span>
+                                        </div>
+                                        <h5 class="hidden" id="total-cart-amount"></h5>
+                                    </div>
+                                </div>
 
-                                                // Update local storage
-                                                localStorage.setItem("cart", JSON.stringify(cart));
-
-                                                // Update UI
-                                                const quantitySpan = document.querySelector(`#qty-${item.id}`);
-                                                const priceSpan = document.querySelector(`#price-${item.id}`);
-                                                quantitySpan.textContent = `Qty: ${item.quantity}`;
-                                                priceSpan.textContent = `${(parseFloat(item.price.replace(" EGP", "")) * item.quantity).toFixed(2)} EGP`;
-
-                                                // Refresh total amount
-                                                updateTotalAmount();
-                                                location.reload(); // Reload to reflect changes
-                                            }
-                                        });
-
-                                    }
-
-                                    // Function to update item quantity in local storage
-                                    function updateLocalDbItemQuantity(itemId, newQuantity) {
-                                        // Find the item in local cart by id and update it
-
-                                        const itemIndex = cart.findIndex(item => item.id === itemId);
-                                        if (itemIndex !== -1) {
-                                            // Check if the new quantity is less than the current quantity
-                                            if (newQuantity < cart[itemIndex].quantity) {
-                                                // Update the quantity to the new allowed quantity
-                                                cart[itemIndex].quantity = newQuantity;
-                                            }
-
-                                            // Update the cart in local storage
-                                            localStorage.setItem("cart", JSON.stringify(cart));
-
-                                            // Optionally, update the UI immediately
-                                            const quantitySpan = document.querySelector(`#qty-${itemId}`);
-                                            const priceSpan = document.querySelector(`#price-${itemId}`);
-                                            if (quantitySpan) {
-                                                quantitySpan.textContent = `Qty: ${cart[itemIndex].quantity}`;
-                                            }
-                                            if (priceSpan) {
-                                                priceSpan.textContent = `${(parseFloat(cart[itemIndex].price.replace(" EGP", "")) * cart[itemIndex].quantity).toFixed(2)} EGP`;
-                                            }
-                                        }
-                                    }
-                                    // Function to update the total amount
-                                    // function updateTotalAmount() {
-                                    //     totalAmount = cart.reduce((acc, item) => acc + parseFloat(item.price.replace(" EGP", "")) * item.quantity, 0);
-                                    //     const totalAmountDiv = document.getElementById("total-cart-amount");
-                                    //     if (totalAmountDiv) {
-                                    //         totalAmountDiv.innerText = `Total : ${totalAmount.toFixed(2)} EGP`;
-                                    //     }
-                                    // }
-                                    function updateTotalAmount() {
-                                        // Calculate total amount from cart array
-                                        totalAmount = cart.reduce((acc, item) => {
-                                            const itemPrice = parseFloat(item.price.replace(" EGP", "")) || 0;
-                                            return acc + itemPrice * item.quantity;
-                                        }, 0);
-
-                                        // Update `#total-cart-amount` element
-                                        const totalAmountDiv = document.getElementById("total-cart-amount");
-                                        if (totalAmountDiv) {
-                                            totalAmountDiv.innerText = `Total: ${totalAmount.toFixed(2)} EGP`;
-                                        }
-
-                                        // Update `#cart-total` element
-                                        const cartTotalDiv = document.getElementById("cart-total");
-                                        if (cartTotalDiv) {
-                                            cartTotalDiv.innerText = `${totalAmount.toFixed(2)} EGP`;
-                                        }
-                                    }
-
-
-                                    // Populate cart items
-                                    if (cart.length > 0) {
-
-                                        cart.forEach((item, index) => {
-                                            const listItem = document.createElement("li");
-
-                                            // Item details
-                                            const itemDetailsDiv = document.createElement("div");
-                                            itemDetailsDiv.classList.add("flex", "center", "align-items");
-
-                                            // Image
-                                            const imageDiv = document.createElement("div");
-                                            const itemImage = document.createElement("img");
-                                            itemImage.src = item.photourl;
-                                            itemImage.classList.add("pointer");
-                                            itemImage.onclick = () => productDetails(item.id);
-                                            imageDiv.appendChild(itemImage);
-                                            itemDetailsDiv.appendChild(imageDiv);
-
-                                            // Text
-                                            const textDiv = document.createElement("div");
-                                            textDiv.classList.add("Product-record");
-                                            textDiv.innerHTML = `
-                                                                            <h5 class="pointer" onclick="brand('${item.brand}')">${item.brand}</h5>
-                                                                            <p class="cart-font-smaller">${item.title}</p>
-                                                                            <p>Size: ${item.productSize}</p>
-                                                                            <p>Color: ${item.productColor}</p>
-                                                                            <p id="price-${item.id}">${(parseFloat(item.price.replace(" EGP", "")) * item.quantity).toFixed(2)} EGP</p>
-                                                                            <p id="qty-${item.id}">Qty: ${item.quantity}</p>
-                                                                        `;
-                                            itemDetailsDiv.appendChild(textDiv);
-
-                                            // Controls Div to hold Increment, Decrement, and Delete buttons
-                                            const controlsDiv = document.createElement("div");
-                                            controlsDiv.classList.add("manage-cart-item");
-                                            controlsDiv.style.display = "flex";
-                                            controlsDiv.style.gap = "10px"; // Add spacing between buttons
-                                            controlsDiv.style.alignItems = "center"; // Align buttons vertically
-                                            controlsDiv.style.justifyContent = "center"; // Center the buttons in the div
-
-                                            // Increment Button
-                                            const incrementBtn = document.createElement("i");
-                                            incrementBtn.className = "bi-plus-circle i-cart";
-                                            incrementBtn.style.cursor = "pointer";
-                                            incrementBtn.onclick = () => updateQuantity(index, 1); // Increment quantity
-
-                                            // Decrement Button
-                                            const decrementBtn = document.createElement("i");
-                                            decrementBtn.className = "bi-dash-circle i-cart";
-                                            decrementBtn.style.cursor = "pointer";
-                                            decrementBtn.onclick = () => updateQuantity(index, -1); // Decrement quantity
-
-                                            // Delete Button
-                                            const deleteIcon = document.createElement("i");
-                                            deleteIcon.className = "bi-bag-dash i-cart";
-                                            deleteIcon.style.cursor = "pointer";
-                                            deleteIcon.onclick = () => {
-                                                cart.splice(index, 1);
-                                                localStorage.setItem("cart", JSON.stringify(cart));
-                                                listItem.remove();
-                                                updateTotalAmount();
-                                                window.location.reload();
-                                            };
-
-                                            // Append all buttons to controlsDiv
-                                            controlsDiv.appendChild(decrementBtn);
-                                            controlsDiv.appendChild(incrementBtn);
-                                            controlsDiv.appendChild(deleteIcon);
-
-                                            // Append controlsDiv to itemDetailsDiv
-                                            itemDetailsDiv.appendChild(controlsDiv);
-
-                                            // Append itemDetailsDiv to listItem
-                                            listItem.appendChild(itemDetailsDiv);
-
-                                            // Append listItem to cart list
-                                            cartList.appendChild(listItem);
-
-                                        });
-
-                                        // Total Amount
-                                        const totalAmountH5 = document.getElementById("total-cart-amount");
-                                        totalAmountH5.textContent = `Cart Total : ${totalAmount.toFixed(2)} EGP`;
-
-                                        // Initial total amount calculation
-                                        updateTotalAmount();
-                                    } else {
-                                        cartList.textContent = "Your cart is empty";
-                                        cartArea.classList.add("flex", "center", "align-items");
-                                    }
-                                });
-                            </script>
-
-
+                            </div>
                         </div>
-
-
+                        <div class="flex center m-30"><button id="Submit" class="Add-to-Cart"
+                                onclick="submitOrder()">Submit
+                                Order
+                                <i class="bi bi-check2-all"></i>
+                            </button></div>
 
 
                     </div>
-                    <div class="m-10 flex center">
-                        <h5 id="total-cart-amount"></h5>
-                    </div>
+
 
 
                 </div>
-                <div class="flex center" id="next1Button">
 
-                    <button id="addToCartButton" class="Add-to-Cart" onclick="Next1()">Next
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-
-                </div>
             </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                    const cartList = document.getElementById("cart-items");
+                    const cartArea = document.getElementById("cartarea");
+                    let totalAmount = 0;
 
+                    // Function to check availability from Firebase database
 
-            </script>
-            <div id="Info-card" class="hidden">
-                <div class="flex center flex-direction-column align-items  m-10  height-50 " id="Information">
-                    <div class="m-10 flex center align-items">
-                        <h3>Address Information</h3>
-                    </div>
-                    <div class="width-90 padding-10 cart-bg over-flow-auto box-with-shadow " id="cartarea">
-                        <span class="small-txt m-5 txt-center line-height-15 flex center align-items">
-                            - Please select the address where your order will be shipped
-                        </span>
-                        <span class="small-txt m-5 txt-center line-height-15 flex center align-items">
-                            - If you'd like to add more addresses, you can do so in <a class="ml-3"
-                                href="./account.html"> Account
-                                settings</a>
-                        </span>
-                        <!-- <div class="flex center flex-wrap">
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">First-Name</h5>
-                                <input type="text" id="firstName" name="First-name" required="" class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Last-Name</h5>
-                                <input type="text" id="lastName" name="Last-name" required="" class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Email</h5>
-                                <input type="email" id="email" name="email" required="" class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Phone-Number</h5>
-                                <input type="text" id="phoneNumber" name="Phone-number" required="" class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">House-Phone-Number</h5>
-                                <input type="text" id="housePhoneNumber" name="House-phone-number"
-                                    placeholder="optional.." class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Governorate</h5>
-                                <select id="city" name="city" required="" class="input-cart select-city">
-                                    <option value="Cairo">Cairo</option>
-                                    <option value="Giza">Giza</option>
-                                    <option value="Alexandria">Alexandria</option>
-                                    <option value="Aswan">Aswan</option>
-                                    <option value="Asyut">Asyut</option>
-                                    <option value="Beheira">Beheira</option>
-                                    <option value="Beni Suef">Beni Suef</option>
-                                    <option value="Dakahlia">Dakahlia</option>
-                                    <option value="Damietta">Damietta</option>
-                                    <option value="Faiyum">Faiyum</option>
-                                    <option value="Gharbia">Gharbia</option>
-                                    <option value="Ismailia">Ismailia</option>
-                                    <option value="Kafr El Sheikh">Kafr El Sheikh</option>
-                                    <option value="Luxor">Luxor</option>
-                                    <option value="Matruh">Matruh</option>
-                                    <option value="Minya">Minya</option>
-                                    <option value="Monufia">Monufia</option>
-                                    <option value="New Valley">New Valley</option>
-                                    <option value="North Sinai">North Sinai</option>
-                                    <option value="Port Said">Port Said</option>
-                                    <option value="Qalyubia">Qalyubia</option>
-                                    <option value="Qena">Qena</option>
-                                    <option value="Red Sea">Red Sea</option>
-                                    <option value="Sharqia">Sharqia</option>
-                                    <option value="Sohag">Sohag</option>
-                                    <option value="South Sinai">South Sinai</option>
-                                    <option value="Suez">Suez</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
+                    function checkAvailability(itemId, productSize, productColor, requestedQuantity, callback) {
+                        // Fetch the product data from Firebase database
+                        fetch(`${url}/Stores/${uid}/Products/${itemId}.json`)
+                            .then(response => response.json())
+                            .then(productsData => {
+                                let itemFound = false;
+                                let availableQty = 0;
 
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Area</h5>
-                                <input type="text" id="area" name="text" placeholder="ex: el-kawmia" required=""
-                                    class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">House-Number</h5>
-                                <input type="text" id="houseNumber" name="text" placeholder="ex:11" required=""
-                                    class="input-cart">
-                            </div>
-                            <div class="fit-content m-5">
-                                <h5 class="h5-form">Floor-Number</h5>
-                                <input type="text" id="floorNumber" name="text" placeholder="ex:3" required=""
-                                    class="input-cart">
-                            </div>
-                        </div> -->
-                        <div id="address-area" class="">
+                                // Loop through the product data to find the correct item
+                                for (const key in productsData.sizes) {
+                                    if (key === productSize) {
+                                        const sizeData = productsData.sizes[key];
+                                        if (sizeData[productColor]) {
+                                            const colorData = sizeData[productColor];
+                                            availableQty = parseInt(colorData.qty, 10); // Get the available quantity
+                                            const colorImage = colorData.img1 || productsData["product-photo"]; // Use color image or fallback to main product photo
 
-                        </div>
-                        <!-- <div class="">
-                            <div class="fit-content m-5 width-available">
-                                <h5>Address</h5>
-                                <textarea id="address" name="text" required=""
-                                    class="input-cart textarea-address width-available"></textarea>
-                            </div>
-                        </div> -->
+                                            itemFound = true;
 
-                        <!-- <div class="flex center">
-                            <span class="small-txt m-5 txt-center line-height-15"> you can delete Stored information by
-                                clicking here <i onclick="removePersonalInfo()"
-                                    class="bi bi-eraser pointer  icon-hov-del"></i>
-                            </span>
-                            <script>
-                                function removePersonalInfo() {
-                                    localStorage.removeItem('personal_info');
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Deleted',
-                                        showConfirmButton: false,
-                                        timer: 1500 // Close the alert after 1.5 seconds
-                                    });
-                                    // Optionally, you can also clear the form fields here
+                                            // Check if the requested quantity is available
+                                            if (requestedQuantity <= availableQty && requestedQuantity > 0) {
+                                                callback(true, availableQty); // Proceed if available
+                                            } else {
+                                                // Insufficient stock, update to the available quantity in local storage
+                                                Swal.fire({
+                                                    icon: "warning",
+                                                    html: `<div style="display: flex; align-items: center; gap: 10px;">
+                                                    <img src="${colorImage}" alt="${productsData["product-title"]}" 
+                                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" />
+                                                    <span>Only ${availableQty} items available of this product</span>
+                                                  </div>`,
+                                                }).then(() => {
+                                                    // Update the cart locally to the available quantity
+                                                    updateLocalDbItemQuantity(itemId, availableQty);
+                                                });
+
+                                                callback(false, availableQty); // Insufficient stock, update local DB
+                                            }
+
+                                            break;
+                                        }
+                                    }
                                 }
-                            </script>
-                        </div> -->
-                    </div>
 
-                    <!-- <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Load form data from local storage
-                            loadpersonal_info();
-
-                            // Add event listeners to save data when input changes
-                            document.querySelectorAll('.input-cart').forEach(input => {
-                                input.addEventListener('input', savepersonal_info);
-                                input.addEventListener('input', checkFormValidity);
+                                if (!itemFound) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Item Not Found",
+                                        text: "This item is no longer available.",
+                                    });
+                                    callback(false, availableQty); // Item not found
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error checking availability:", error);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "There was an error checking availability. Please try again later.",
+                                });
+                                callback(false, 0); // Error
                             });
-                            document.querySelectorAll('.select-city').forEach(select => {
-                                select.addEventListener('change', savepersonal_info);
-                                select.addEventListener('change', checkFormValidity);
-                            });
+                    }
 
-                            // Initially check form validity
-                            checkFormValidity();
+
+                    function checkAndUpdateQuantities() {
+                        cart.forEach((item) => {
+                            checkAvailability(item.id, item.productSize, item.productColor, item.quantity, (isAvailable, availableQty) => {
+                                if (!isAvailable) {
+                                    // If not available, update the local storage item quantity
+                                    updateLocalDbItemQuantity(item.id, availableQty);
+                                }
+                            });
+                        });
+                    }
+
+                    // Function to update quantity in the cart
+                    function updateQuantity(index, increment) {
+                        const item = cart[index];
+
+                        // Determine the requested quantity after increment or decrement
+                        const requestedQuantity = item.quantity + increment;
+
+                        // Ensure the requested quantity is never less than 1
+                        if (requestedQuantity < 1) {
+                            return; // Prevent decrement below 1
+                        }
+
+                        // Check availability based on the updated requested quantity
+                        checkAvailability(item.id, item.productSize, item.productColor, requestedQuantity, (isAvailable, availableQty) => {
+                            if (isAvailable) {
+                                // If the item is available and stock is sufficient, update the cart
+                                item.quantity = requestedQuantity; // Update quantity based on the requested quantity
+                                cart[index] = item;
+
+                                // Update local storage
+                                localStorage.setItem("cart", JSON.stringify(cart));
+
+                                // Update UI
+                                const quantitySpan = document.querySelector(`#qty-${item.id}`);
+                                const priceSpan = document.querySelector(`#price-${item.id}`);
+                                quantitySpan.textContent = `Qty: ${item.quantity}`;
+                                priceSpan.textContent = `${(parseFloat(item.price.replace(" EGP", "")) * item.quantity).toFixed(2)} EGP`;
+
+                                // Refresh total amount
+                                updateTotalAmount();
+                                location.reload(); // Reload to reflect changes
+                            }
                         });
 
-                        function savepersonal_info() {
-                            let personal_info = {
-                                firstName: document.getElementById('firstName').value,
-                                lastName: document.getElementById('lastName').value,
-                                email: document.getElementById('email').value,
-                                phoneNumber: document.getElementById('phoneNumber').value,
-                                housePhoneNumber: document.getElementById('housePhoneNumber').value,
-                                city: document.getElementById('city').value,
-                                area: document.getElementById('area').value,
-                                houseNumber: document.getElementById('houseNumber').value,
-                                floorNumber: document.getElementById('floorNumber').value,
-                                address: document.getElementById('address').value
+                    }
+
+                    // Function to update item quantity in local storage
+                    function updateLocalDbItemQuantity(itemId, newQuantity) {
+                        // Find the item in local cart by id and update it
+
+                        const itemIndex = cart.findIndex(item => item.id === itemId);
+                        if (itemIndex !== -1) {
+                            // Check if the new quantity is less than the current quantity
+                            if (newQuantity < cart[itemIndex].quantity) {
+                                // Update the quantity to the new allowed quantity
+                                cart[itemIndex].quantity = newQuantity;
+                            }
+
+                            // Update the cart in local storage
+                            localStorage.setItem("cart", JSON.stringify(cart));
+
+                            // Optionally, update the UI immediately
+                            const quantitySpan = document.querySelector(`#qty-${itemId}`);
+                            const priceSpan = document.querySelector(`#price-${itemId}`);
+                            if (quantitySpan) {
+                                quantitySpan.textContent = `Qty: ${cart[itemIndex].quantity}`;
+                            }
+                            if (priceSpan) {
+                                priceSpan.textContent = `${(parseFloat(cart[itemIndex].price.replace(" EGP", "")) * cart[itemIndex].quantity).toFixed(2)} EGP`;
+                            }
+                        }
+                    }
+                    // Function to update the total amount
+                    // function updateTotalAmount() {
+                    //     totalAmount = cart.reduce((acc, item) => acc + parseFloat(item.price.replace(" EGP", "")) * item.quantity, 0);
+                    //     const totalAmountDiv = document.getElementById("total-cart-amount");
+                    //     if (totalAmountDiv) {
+                    //         totalAmountDiv.innerText = `Total : ${totalAmount.toFixed(2)} EGP`;
+                    //     }
+                    // }
+                    function updateTotalAmount() {
+                        // Calculate total amount from cart array
+                        totalAmount = cart.reduce((acc, item) => {
+                            const itemPrice = parseFloat(item.price.replace(" EGP", "")) || 0;
+                            return acc + itemPrice * item.quantity;
+                        }, 0);
+
+                        // Update `#total-cart-amount` element
+                        const totalAmountDiv = document.getElementById("total-cart-amount");
+                        if (totalAmountDiv) {
+                            totalAmountDiv.innerText = `Total: ${totalAmount.toFixed(2)} EGP`;
+                        }
+
+                        // Update `#cart-total` element
+                        const cartTotalDiv = document.getElementById("cart-total");
+                        if (cartTotalDiv) {
+                            cartTotalDiv.innerText = `${totalAmount.toFixed(2)} EGP`;
+                        }
+                    }
+
+
+                    // Populate cart items
+                    if (cart.length > 0) {
+
+                        cart.forEach((item, index) => {
+                            const listItem = document.createElement("li");
+
+                            // Item details
+                            const itemDetailsDiv = document.createElement("div");
+                            itemDetailsDiv.classList.add("flex", "center", "align-items", "cart-item-sm");
+
+                            // Image
+                            const imageDiv = document.createElement("div");
+                            const itemImage = document.createElement("img");
+                            itemImage.src = item.photourl;
+                            itemImage.classList.add("pointer", "image-cart-sm");
+                            itemImage.onclick = () => productDetails(item.id);
+                            imageDiv.appendChild(itemImage);
+                            itemDetailsDiv.appendChild(imageDiv);
+
+                            // Text
+                            const textDiv = document.createElement("div");
+                            textDiv.classList.add("Product-record");
+                            textDiv.innerHTML = `
+                                                                                        <h5 class="pointer" onclick="brand('${item.brand}')">${item.brand}</h5>
+                                                                                        <p class="cart-font-smaller">${item.title}</p>
+                                                                                        <p>Size: ${item.productSize}</p>
+                                                                                        <p>Color: ${item.productColor}</p>
+                                                                                        <p id="price-${item.id}">${(parseFloat(item.price.replace(" EGP", "")) * item.quantity).toFixed(2)} EGP</p>
+                                                                                        <p id="qty-${item.id}">Qty: ${item.quantity}</p>
+                                                                                    `;
+                            itemDetailsDiv.appendChild(textDiv);
+
+                            // Controls Div to hold Increment, Decrement, and Delete buttons
+                            const controlsDiv = document.createElement("div");
+                            controlsDiv.classList.add("manage-cart-item");
+                            controlsDiv.style.display = "flex";
+                            controlsDiv.style.gap = "10px"; // Add spacing between buttons
+                            controlsDiv.style.alignItems = "center"; // Align buttons vertically
+                            controlsDiv.style.justifyContent = "center"; // Center the buttons in the div
+
+                            // Increment Button
+                            const incrementBtn = document.createElement("i");
+                            incrementBtn.className = "bi-plus-circle i-cart";
+                            incrementBtn.style.cursor = "pointer";
+                            incrementBtn.onclick = () => updateQuantity(index, 1); // Increment quantity
+
+                            // Decrement Button
+                            const decrementBtn = document.createElement("i");
+                            decrementBtn.className = "bi-dash-circle i-cart";
+                            decrementBtn.style.cursor = "pointer";
+                            decrementBtn.onclick = () => updateQuantity(index, -1); // Decrement quantity
+
+                            // Delete Button
+                            const deleteIcon = document.createElement("i");
+                            deleteIcon.className = "bi-bag-dash i-cart";
+                            deleteIcon.style.cursor = "pointer";
+                            deleteIcon.onclick = () => {
+                                cart.splice(index, 1);
+                                localStorage.setItem("cart", JSON.stringify(cart));
+                                listItem.remove();
+                                updateTotalAmount();
+                                window.location.reload();
                             };
 
-                            // Save form data to local storage
-                            localStorage.setItem('personal_info', JSON.stringify(personal_info));
+                            // Append all buttons to controlsDiv
+                            controlsDiv.appendChild(decrementBtn);
+                            controlsDiv.appendChild(incrementBtn);
+                            controlsDiv.appendChild(deleteIcon);
+
+                            // Append controlsDiv to itemDetailsDiv
+                            itemDetailsDiv.appendChild(controlsDiv);
+
+                            // Append itemDetailsDiv to listItem
+                            listItem.appendChild(itemDetailsDiv);
+
+                            // Append listItem to cart list
+                            cartList.appendChild(listItem);
+
+                        });
+
+                        // Total Amount
+                        const totalAmountH5 = document.getElementById("total-cart-amount");
+                        totalAmountH5.textContent = `Cart Total : ${totalAmount.toFixed(2)} EGP`;
+
+                        // Initial total amount calculation
+                        updateTotalAmount();
+                    } else {
+                        cartList.innerHTML = `<div class="empty-cart">
+    <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" alt="Empty Cart" class="empty-cart-img">
+    <p class="empty-cart-text">Looks like you haven’t added anything yet.</p>
+    <a href="Products.html" class="empty-cart-btn">Start Shopping</a>
+</div>
+
+`;
+
+
+                        cartArea.classList.add("flex", "center", "align-items");
+                    }
+                });
+            </script>
+            <script>
+                // Get elements
+                const paymentOptions = document.querySelectorAll(".payment-option");
+                const dots = document.querySelectorAll(".pagination-dots .dot");
+                const paymentOptionsContainer = document.querySelector(".payment-options");
+
+                let currentIndex = 0;
+
+                // Function to update the displayed payment option
+                function updatePaymentOption(index) {
+                    const offset = -index * 100; // Calculate offset for transform
+                    paymentOptionsContainer.style.transform = `translateX(${offset}%)`;
+                    paymentOptionsContainer.style.transition = "transform 0.3s ease-in-out"; // Smooth transition
+
+                    // Update dots
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle("active", i === index);
+                    });
+                }
+
+                // Add event listeners to dots
+                dots.forEach((dot, index) => {
+                    dot.addEventListener("click", () => {
+                        currentIndex = index;
+                        updatePaymentOption(index);
+                    });
+                });
+
+                // Add event listeners to payment options
+                paymentOptions.forEach((option, index) => {
+                    option.addEventListener("click", () => {
+                        currentIndex = index;
+                        updatePaymentOption(index);
+                    });
+                });
+
+                // Handle touch gestures for scrolling on mobile (iOS and Android)
+                let startX = 0;
+                let currentTranslate = 0;
+                let isDragging = false;
+
+                paymentOptionsContainer.addEventListener("touchstart", (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                    paymentOptionsContainer.style.transition = "none"; // Disable transition during drag
+                });
+
+                paymentOptionsContainer.addEventListener("touchmove", (e) => {
+                    if (!isDragging) return;
+                    const deltaX = e.touches[0].clientX - startX;
+                    const width = paymentOptionsContainer.offsetWidth;
+                    const percentMoved = deltaX / width;
+                    currentTranslate = -(currentIndex * 100) + percentMoved * 100;
+                    paymentOptionsContainer.style.transform = `translateX(${currentTranslate}%)`;
+                });
+
+                paymentOptionsContainer.addEventListener("touchend", (e) => {
+                    isDragging = false;
+                    const width = paymentOptionsContainer.offsetWidth;
+                    const deltaX = e.changedTouches[0].clientX - startX;
+                    const threshold = width / 4; // Minimum distance to trigger a swipe
+
+                    if (Math.abs(deltaX) > threshold) {
+                        if (deltaX > 0 && currentIndex > 0) {
+                            // Swipe right
+                            currentIndex--;
+                        } else if (deltaX < 0 && currentIndex < paymentOptions.length - 1) {
+                            // Swipe left
+                            currentIndex++;
                         }
+                    }
+                    updatePaymentOption(currentIndex);
+                });
 
-                        function loadpersonal_info() {
-                            let personal_info = JSON.parse(localStorage.getItem('personal_info'));
+                // Add support for mouse drag (optional for desktop browsers)
+                let isMouseDragging = false;
+                let mouseStartX = 0;
 
-                            if (personal_info) {
-                                document.getElementById('firstName').value = personal_info.firstName || '';
-                                document.getElementById('lastName').value = personal_info.lastName || '';
-                                document.getElementById('email').value = personal_info.email || '';
-                                document.getElementById('phoneNumber').value = personal_info.phoneNumber || '';
-                                document.getElementById('housePhoneNumber').value = personal_info.housePhoneNumber || '';
-                                document.getElementById('city').value = personal_info.city || '';
-                                document.getElementById('area').value = personal_info.area || '';
-                                document.getElementById('houseNumber').value = personal_info.houseNumber || '';
-                                document.getElementById('floorNumber').value = personal_info.floorNumber || '';
-                                document.getElementById('address').value = personal_info.address || '';
-                            }
+                paymentOptionsContainer.addEventListener("mousedown", (e) => {
+                    mouseStartX = e.clientX;
+                    isMouseDragging = true;
+                    paymentOptionsContainer.style.transition = "none";
+                });
+
+                paymentOptionsContainer.addEventListener("mousemove", (e) => {
+                    if (!isMouseDragging) return;
+                    const deltaX = e.clientX - mouseStartX;
+                    const width = paymentOptionsContainer.offsetWidth;
+                    const percentMoved = deltaX / width;
+                    currentTranslate = -(currentIndex * 100) + percentMoved * 100;
+                    paymentOptionsContainer.style.transform = `translateX(${currentTranslate}%)`;
+                });
+
+                paymentOptionsContainer.addEventListener("mouseup", (e) => {
+                    isMouseDragging = false;
+                    const width = paymentOptionsContainer.offsetWidth;
+                    const deltaX = e.clientX - mouseStartX;
+                    const threshold = width / 4;
+
+                    if (Math.abs(deltaX) > threshold) {
+                        if (deltaX > 0 && currentIndex > 0) {
+                            currentIndex--;
+                        } else if (deltaX < 0 && currentIndex < paymentOptions.length - 1) {
+                            currentIndex++;
                         }
+                    }
+                    updatePaymentOption(currentIndex);
+                });
 
-                        function checkFormValidity() {
-                            const requiredFields = ['firstName', 'lastName', 'email', 'phoneNumber', 'city', 'area', 'address'];
-                            let isValid = true;
+                paymentOptionsContainer.addEventListener("mouseleave", () => {
+                    isMouseDragging = false;
+                });
 
-                            requiredFields.forEach(field => {
-                                const input = document.getElementById(field);
-                                if (!input.value.trim()) {
-                                    isValid = false;
-                                }
-                            });
+                // Initialize with the first payment option
+                updatePaymentOption(currentIndex);
+            </script>
+            <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+            <script src="./assets/js/submit-order.js"></script>
 
-                            const nextButton = document.getElementById('nextButton');
-                            if (isValid) {
-                                nextButton.style.opacity = 1;
-                                nextButton.disabled = false;
-                            } else {
-                                nextButton.style.opacity = 0.5;
-                                nextButton.disabled = true;
-                            }
-                        }
-                    </script> -->
-                </div>
-
-                <div class="flex center  m-10  height-auto" id="Information">
-                    <div class="width-90 padding-10 cart-bg over-flow-auto box-with-shadow " id="cartarea">
-                        <div class="m-10 flex center align-items">
-                            <h3>Shipping Information</h3>
-                        </div>
-
-                        <div class="flex center align-items m-10">
-                            <h5 class="small-txt  txt-center line-height-15 flex align-items">
-                                shipping fees will be :
-                                <h5 id="shipping-fees" class="ml-3"></h5>
-                            </h5>
-                        </div>
-                        <div class="flex center align-items m-10">
-                            <button id="addToCartButton" class="Add-to-Cart font-smaller flex center align-items"
-                                onclick="showMoreShippingData()">
-                                <p class="font-smaller" id="shiptxtinfo">Show More Info</p>
-                                <i id="shippininfoicon" class="bi bi-plus"></i>
-                            </button>
-                        </div>
-
-                        <div class="hidden" id="shippingInfo">
-                            <div class="flex center align-items">
-                                <span class="small-txt m-5 txt-center line-height-15 flex align-items">
-                                    - Enjoy fast delivery! Your shipment will arrive within a maximum of four days.
-                                </span>
-                            </div>
-                            <div class="flex center align-items">
-                                <span class="small-txt m-5 txt-center line-height-15 flex align-items">
-                                    - Get free shipping when you meet the minimum order requirement!.
-                                </span>
-                            </div>
-
-                        </div>
-                        <!-- <script>
-                           
-
-
-
-                            // Call the function when the page loads
-                            document.addEventListener('DOMContentLoaded', updateShippingFees);
-
-                            // Call the function when the city select changes
-                            document.getElementById("city").addEventListener("change", updateShippingFees);
-
-
-                        </script> -->
-                    </div>
-                </div>
-                <div class="flex center" id="next2Button">
-                    <button type="button" class="Add-to-Cart" id="perv1Button" onclick="perv1()">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <button id="nextButton" class="Add-to-Cart" onclick="Next2()">
-                        Next <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-
-            <div id="summary-card" class="hidden">
-                <div class="flex center m-10 " id="Summary">
-                    <div class="width-90 cart-bg over-flow-auto box-with-shadow " id="cartarea">
-                        <div class="m-10 flex center">
-                            <h3>Order Summary</h3>
-                        </div>
-                        <div class="m-20 flex center align-items  m-10">
-                            <h5>Cart Total :</h5><span id="cart-total" class="ml-3"></span>
-                        </div>
-                        <div class="m-20 flex center align-items  m-10">
-                            <h5>Shipping Fees :</h5><span id="shipping-fees-total" class="ml-3"></span>
-                        </div>
-                        <div class="m-20 flex center align-items m-10">
-                            <h5>Total Price :</h5><span id="total-price" class="ml-3"></span>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="flex center " id="next3Button">
-                    <button type="button" class="Add-to-Cart" id="perv3Button" onclick="perv2()">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <button id="Next3" class="Add-to-Cart" onclick="Next3()">Next
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
-                <script>
-
-
-
-                    // Add event listener to update shipping fees when the city select changes
-                    // document.getElementById("city").addEventListener("change", updateShippingFees);
-                </script>
-
-            </div>
-
-            <div id="Payment-card" class="hidden">
-                <div class="flex center width-auto m-10" id="Payment">
-
-                    <div class="width-90 cart-bg padding-10 over-flow-auto box-with-shadow flex align-items flex-direction-column center"
-                        id="cartarea">
-                        <div class="m-10">
-                            <h3>Payment Method</h3>
-                        </div>
-
-                        <div class="flex center">
-                            <!-- <div class="flex center col-u-991">
-                                <div class="flex center p-10 flex-direction-column align-items" id="cash">
-                                    <img class="img-payment payment-option"
-                                        src="https://i.imgur.com/TYOv2Mm_d.webp?maxwidth=760&fidelity=grand">
-                                    <h5 class="mt-10">Cash on Delivery</h5>
-                                </div>
-                                <div class="flex center p-10 flex-direction-column align-items disabled" id="visa">
-                                    <div class="overlay2">Coming Soon</div>
-                                    <img class="img-payment "
-                                        src="https://i.imgur.com/HfWCw1n_d.webp?maxwidth=760&fidelity=grand">
-                                    <h5 class="mt-10">Pay With Visa</h5>
-                                </div>
-                                <div class="flex center p-10 flex-direction-column align-items disabled" id="fawry">
-                                    <div class="overlay2">Coming Soon</div>
-                                    <img class="img-payment "
-                                        src="https://i.imgur.com/QsmNvfF_d.webp?maxwidth=760&fidelity=grand">
-                                    <h5 class="mt-10">Pay With Fawry</h5>
-                                </div>
-                            </div> -->
-                            <div class="payment-options">
-                                <div class="payment-option active" id="card">
-                                    <img src="./assets/icons/COD.svg" alt="Card">
-                                    <h5>Cash on delivery</h5>
-                                </div>
-                                <div class="payment-option disabled coming-soon" id="google-pay">
-                                    <img src="./assets/icons/VISA.svg" alt="Google Pay">
-                                    <h5>Pay With Card</h5>
-                                </div>
-                                <div class="payment-option disabled coming-soon" id="bank">
-                                    <img src="./assets/icons/Fawry.svg" alt="Bank">
-                                    <h5>Pay With Fawry</h5>
-                                </div>
-                            </div>
-
-
-                            <script>
-                                // Get all payment options
-                                let paymentOptions = document.querySelectorAll('.payment-option');
-
-                                // Add click event listener to each payment option
-                                paymentOptions.forEach(option => {
-                                    option.addEventListener('click', function () {
-                                        // Remove green border from all payment options
-                                        paymentOptions.forEach(opt => {
-                                            opt.classList.remove('selected');
-                                        });
-
-                                        // Add green border to the clicked payment option
-                                        this.classList.add('selected');
-                                    });
-                                });
-
-                            </script>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="flex center " id="submit-order">
-                    <button type="button" class="Add-to-Cart" id="perv4Button" onclick="perv3()">
-                        <i class="bi bi-arrow-left"></i>
-                    </button>
-                    <button id="Submit" class="Add-to-Cart" onclick="submitOrder()">Submit Order
-                        <i class="bi bi-check2-all"></i>
-                    </button>
-
-                    <!-- Firebase Configuration and Script -->
-                    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-                    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-                    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-                    <script src="./assets/js/submit-order.js"></script>
-                </div>
-            </div>
 
         </section>
+
     </div>
+
     <div class="flex center">
         <a href="https://matager.online" target="_blank">
             <img src="./assets/images/powerd by matager black.svg" width="100px">
         </a>
     </div>
 
-    <script>
-        // // Manage step navigation
-        function goToStep(step) {
-            const steps = ['cart-card', 'Info-card', 'summary-card', 'Payment-card'];
-            const targets = ['target-1', 'target-2', 'target-3', 'target-4'];
-            const connectors = ['connector1', 'connector2', 'connector3'];
 
-            // Hide all steps and remove 'targeted-step' class
-            steps.forEach((id, index) => {
-                const card = document.getElementById(id);
-                const target = document.getElementById(targets[index]);
-
-                if (card) card.classList.add('hidden');
-                if (target) target.classList.remove('targeted-step');
-            });
-
-            // Show current step
-            const currentCard = document.getElementById(steps[step - 1]);
-            const currentTarget = document.getElementById(targets[step - 1]);
-            if (currentCard) currentCard.classList.remove('hidden');
-            if (currentTarget) currentTarget.classList.add('targeted-step');
-
-            // Update connectors
-            connectors.forEach((id, index) => {
-                const connector = document.getElementById(id);
-                if (connector) {
-                    connector.classList.toggle('connector-after', index < step - 1);
-                }
-            });
-        }
-
-        // Previous and Next functions
-        function Next1() {
-            goToStep(2);
-        }
-
-        function Next2() {
-            goToStep(3);
-        }
-
-        function Next3() {
-            goToStep(4);
-        }
-
-        function perv1() {
-            goToStep(1);
-        }
-
-        function perv2() {
-            goToStep(2);
-        }
-
-        function perv3() {
-            goToStep(3);
-        }
-
-
-    </script>
 
     </section>
 

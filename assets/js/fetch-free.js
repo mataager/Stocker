@@ -1,40 +1,40 @@
-function setupHoverEffect(productItem) {
-  // Get the images inside the current product item
-  var images = productItem.querySelectorAll(".image-contain");
+// function setupHoverEffect(productItem) {
+//   // Get the images inside the current product item
+//   var images = productItem.querySelectorAll(".image-contain");
 
-  // Function to show the second image
-  function showSecondImage() {
-    images[0].style.display = "none";
-    images[1].style.display = "block";
-  }
+//   // Function to show the second image
+//   function showSecondImage() {
+//     images[0].style.display = "none";
+//     images[1].style.display = "block";
+//   }
 
-  // Function to show the first image
-  function showFirstImage() {
-    images[0].style.display = "block";
-    images[1].style.display = "none";
-  }
+//   // Function to show the first image
+//   function showFirstImage() {
+//     images[0].style.display = "block";
+//     images[1].style.display = "none";
+//   }
 
-  // Add event listener for mouseenter (hover in)
-  productItem.addEventListener("mouseenter", showSecondImage);
+//   // Add event listener for mouseenter (hover in)
+//   productItem.addEventListener("mouseenter", showSecondImage);
 
-  // Add event listener for mouseleave (hover out)
-  productItem.addEventListener("mouseleave", showFirstImage);
+//   // Add event listener for mouseleave (hover out)
+//   productItem.addEventListener("mouseleave", showFirstImage);
 
-  // Add event listener for touchstart (tap in)
-  productItem.addEventListener("touchstart", function () {
-    // Prevent the touch event from triggering a click
-    event.preventDefault();
-    showSecondImage();
-  });
+//   // Add event listener for touchstart (tap in)
+//   productItem.addEventListener("touchstart", function () {
+//     // Prevent the touch event from triggering a click
+//     event.preventDefault();
+//     showSecondImage();
+//   });
 
-  // Add event listener for touchend (tap out)
-  productItem.addEventListener("touchend", function () {
-    showFirstImage();
-  });
+//   // Add event listener for touchend (tap out)
+//   productItem.addEventListener("touchend", function () {
+//     showFirstImage();
+//   });
 
-  // Add event listener for touchcancel (in case the touch action is interrupted)
-  productItem.addEventListener("touchcancel", showFirstImage);
-}
+//   // Add event listener for touchcancel (in case the touch action is interrupted)
+//   productItem.addEventListener("touchcancel", showFirstImage);
+// }
 
 function fetchAndRenderProducts() {
   document.getElementById("preloader").style.display = "flex";
@@ -96,6 +96,11 @@ function fetchAndRenderProducts() {
           }
 
           const salePrice = calculateSalePrice(originalPrice, saleAmount);
+          // Check if the product is a best seller
+          const bestSellerHTML = product["bestseller"]
+            ? `<div class="best-seller" id="best-seller">bestseller<i class="bi bi-lightning-charge"></i></div>`
+            : "";
+          //
 
           // Check and set default image source if necessary
           setDefaultImageSource(product);
@@ -106,6 +111,7 @@ function fetchAndRenderProducts() {
                 <img src="${product["product-photo"]}" width="312" height="350" alt=""class="image-contain" id="swipe1">
                 <img src="${product["product-photo2"]}" width="312" height="350" alt="" id="swipe2" class="image-contain" style="display: none;">
                 <div class="card-badge">New</div>
+                ${bestSellerHTML}
                 <ul class="card-action-list">
                   <li class="card-action-item">
                     <button class="card-action-btn add-to-cart-btn" aria-labelledby="card-label-1" data-product-id="${key}">
@@ -119,6 +125,12 @@ function fetchAndRenderProducts() {
                     </button>
                     <div class="card-action-tooltip" id="card-label-3">Quick View</div>
                   </li>
+                  <li class="card-action-item" onclick="addfavouriteproduct('${key}')">
+              <button class="card-action-btn" aria-labelledby="card-label-3">
+                <ion-icon name="heart-outline" role="img" class="md hydrated" aria-label="heart-outline"></ion-icon>
+              </button>
+              <div class="card-action-tooltip" id="card-label-3">Add to Favourite</div>
+            </li>
                 </ul>
               </figure>
               <div class="card-content mt-10">
@@ -195,7 +207,11 @@ function fetchAndRenderProducts() {
             // Return the integer part of the sale price
             return Math.floor(salePrice);
           }
-
+          // Check if the product is a best seller
+          const bestSellerHTML = product["bestseller"]
+            ? `<div class="best-seller" id="best-seller">bestseller<i class="bi bi-lightning-charge"></i></div>`
+            : "";
+          //
           const salePrice = calculateSalePrice(originalPrice, saleAmount);
           setDefaultImageSource(product);
 
@@ -214,6 +230,8 @@ function fetchAndRenderProducts() {
                     ? `<div class="card-badge">-${saleAmount}%</div>`
                     : ""
                 }
+                ${bestSellerHTML}
+               
                 <ul class="card-action-list">
                   <li class="card-action-item">
                     <button class="card-action-btn add-to-cart-btn" aria-labelledby="card-label-1" data-product-id="${key}">
@@ -227,6 +245,12 @@ function fetchAndRenderProducts() {
                     </button>
                     <div class="card-action-tooltip" id="card-label-3">Quick View</div>
                   </li>
+                  <li class="card-action-item" onclick="addfavouriteproduct('${key}')">
+              <button class="card-action-btn" aria-labelledby="card-label-3">
+                <ion-icon name="heart-outline" role="img" class="md hydrated" aria-label="heart-outline"></ion-icon>
+              </button>
+              <div class="card-action-tooltip" id="card-label-3">Add to Favourite</div>
+            </li>
                 </ul>
               </figure>
               <div class="card-content">
@@ -319,12 +343,19 @@ function renderSaleItems(products, saleContainer) {
       const originalPrice = product["Product-Price"];
       const salePrice = calculateSalePrice(originalPrice, saleAmount);
 
+      // Check if the product is a best seller
+      const bestSellerHTML = product["bestseller"]
+        ? `<div class="best-seller" id="best-seller">bestseller<i class="bi bi-lightning-charge"></i></div>`
+        : "";
+      //
+
       productCard.innerHTML = `
         <div class="product-card" tabindex="0">
           <figure class="card-banner">
             <img src="${product["product-photo"]}" width="312" height="350" alt="" class="image-contain" id="swipe1">
             <img src="${product["product-photo2"]}" width="312" height="350" id="swipe2" class="image-contain" style="display: none;">
             <div class="card-badge"> -${saleAmount}%</div>
+            ${bestSellerHTML}
             <ul class="card-action-list">
               <li class="card-action-item">
                 <button class="card-action-btn add-to-cart-btn" aria-labelledby="card-label-1" data-product-id="${key}">
@@ -338,6 +369,12 @@ function renderSaleItems(products, saleContainer) {
                 </button>
                 <div class="card-action-tooltip" id="card-label-3">Quick View</div>
               </li>
+              <li class="card-action-item" onclick="addfavouriteproduct('${key}')">
+              <button class="card-action-btn" aria-labelledby="card-label-3">
+                <ion-icon name="heart-outline" role="img" class="md hydrated" aria-label="heart-outline"></ion-icon>
+              </button>
+              <div class="card-action-tooltip" id="card-label-3">Add to Favourite</div>
+            </li>
             </ul>
           </figure>
           <div class="card-content mt-10">
@@ -358,6 +395,8 @@ function renderSaleItems(products, saleContainer) {
       setupHoverEffect(productCard);
 
       saleItemCount++;
+      document.getElementById("preloader").style.display = "none";
+    } else {
       document.getElementById("preloader").style.display = "none";
     }
   });

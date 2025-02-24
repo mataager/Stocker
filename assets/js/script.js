@@ -101,6 +101,12 @@ function renderProducts() {
 
     const salePrice = calculateSalePrice(originalPrice, saleAmount);
 
+    // Check if the product is a best seller
+    const bestSellerHTML = product["bestseller"]
+      ? `<div class="best-seller" id="best-seller">bestseller<i class="bi bi-lightning-charge"></i></div>`
+      : "";
+    //
+
     // Get category and sizes information
     const category = product["category"] || "Unknown category"; // Default to 'Unknown category' if not present
     const sizes = product.sizes
@@ -121,6 +127,7 @@ function renderProducts() {
           }" width="312" height="350" id="swipe2" class="image-contain" style="display: none;">
           
           ${saleAmount ? `<div class="card-badge">-${saleAmount}%</div>` : ""}
+          ${bestSellerHTML}
           <ul class="card-action-list">
             <li class="card-action-item">
               <button class="card-action-btn add-to-cart-btn" data-product-id="${key}" aria-labelledby="card-label-1">

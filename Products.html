@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="store-title"></title>
-    <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="shortcut icon" href="./favicon.png" type="image/svg+xml">
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -64,18 +64,10 @@
                 <li class="navbar-item">
                     <a href="#" class="navbar-link" onclick="changeFrameSrc('index.html')">Home</a>
                 </li>
-                <!-- <li class="navbar-item">
-                                        <a href="#" class="navbar-link" onclick="changeFrameSrc('About.html')">About</a>
-                                    </li> -->
                 <li class="navbar-item">
-                    <div class="flex align-items justify-content-space-between">
-                        <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
-                        <a id="open-category" class="rotate open-category open-category-btn"><i
-                                class="bi bi-plus"></i></a>
-                    </div>
-
+                    <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                 </li>
-                <li class="navbar-item hidden" id="megamenu" data-mega-menu>
+                <li class="navbar-item" id="megamenu" style="display: none;" data-mega-menu>
                     <div class="flex align-items justify-content-space-between">
                         <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                         <a id="open-category" class="rotate open-category open-category-btn"><i

@@ -24,24 +24,7 @@
 
 
 <script src="./js/inithialize-firebase.js"></script>
-<script>
-
-    // Firebase initialization code as shown above
-
-    // Function to check if user is authenticated
-    function checkAuthAndRedirect() {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, continue to the page
-                //  console.log("User is signed in:", user.email);
-            } else {
-                // No user is signed in, redirect to login page
-                // console.log("User is not signed in, redirecting to login page...");
-                window.location.href = './index.html'; // Adjust the URL as needed
-            }
-        });
-    }
-</script>
+<script src="./js/checkUserAuthStatus.js"></script>
 <script src="./js/Logout.js"></script>
 
 <body id="top" onload="checkAuthAndRedirect()">
@@ -71,7 +54,7 @@
 
             </div>
             <div class="flex flex-wrap center overflow-y">
-                <section class="overflow border-div-table c8080800a radius-15">
+                <section class="overflow border-div-table c8080800a radius-15 width-fit">
                     <div class="tbl-header">
                         <table cellpadding="0" cellspacing="0">
                             <thead>
@@ -79,12 +62,12 @@
                                     <th>Name</th>
                                     <th>Phone Number</th>
                                     <th>Problem-Description</th>
-                                    <th class="textalign">More</th>
+                                    <th class="w-300 pl-40">More</th>
                                 </tr>
                             </thead>
                         </table>
                     </div>
-                    <div id="customer-reports" class="tbl-content">
+                    <div id="customer-reports" class="tbl-content flex center">
                         <div id="preloader" class="preloader hidden">
                             <div class="spinner"></div>
                         </div>
@@ -107,6 +90,15 @@
 
         </div>
     </main>
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span id="closeReportModal" class="close">×</span>
+            <h5 class="mb-20 mt-20" id="reportTitle"></h5>
+            <textarea class="formbold-form-input shadow mb-10 border-15-3px" id="reportDescription" readonly rows="10"
+                cols="50"></textarea>
+        </div>
+    </div>
+
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdown');
@@ -122,124 +114,6 @@
             }
         });
     </script>
-
-    <!-- <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const reportsUrl = `${url}/Stores/${uid}/reports.json`;
-            const tableBody = document.getElementById("customerreports-table-body");
-            const preloader = document.getElementById("preloader");
-
-            // Fetch reports from Firebase
-            function fetchReports() {
-                preloader.classList.remove("hidden");
-
-                fetch(reportsUrl)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        tableBody.innerHTML = ""; // Clear existing table data
-                        preloader.classList.add("hidden");
-
-                        if (data) {
-                            Object.keys(data).forEach((key) => {
-                                const report = data[key];
-                                const truncatedProblem = report.problemDescription.length > 50 ? report.problemDescription.substring(0, 50) + "..." : report.problemDescription;
-
-                                const row = document.createElement("tr");
-
-                                row.innerHTML = `
-              <td>${report.customerName}</td>
-              <td>${report.phoneNumber}</td>
-              <td>${truncatedProblem}</td>
-              <td class="textalign ">
-                <div class="flex">
-                <button class="btn-view formbold-form-label addbtn pointer open-order-btn p-7" data-key="${key}" data-fullproblem="${report.problemDescription}"> <i class="bi bi-plus-circle point"></i></button>
-                <button class="btn-delete formbold-form-label addbtn pointer open-order-btn p-7" data-key="${key}"><i class="bi bi-x-circle pointer"></i></button>
-                </div>
-              </td>
-            `;
-
-                                tableBody.appendChild(row);
-                            });
-
-                            addEventListeners(); // Add event listeners to buttons
-                        } else {
-                            // No reports available
-                            tableBody.innerHTML = "<tr><td colspan='4' class='center'>No reports found.</td></tr>";
-                        }
-                    })
-                    .catch((error) => {
-                        preloader.classList.add("hidden");
-                        console.error("Error fetching reports:", error);
-                    });
-            }
-
-            // Add event listeners to buttons
-            function addEventListeners() {
-                const viewButtons = document.querySelectorAll(".btn-view");
-                const deleteButtons = document.querySelectorAll(".btn-delete");
-
-                viewButtons.forEach((button) => {
-                    button.addEventListener("click", function () {
-                        const fullProblem = this.getAttribute("data-fullproblem");
-                        openModal(fullProblem);
-                    });
-                });
-
-                deleteButtons.forEach((button) => {
-                    button.addEventListener("click", function () {
-                        const reportKey = this.getAttribute("data-key");
-                        deleteReport(reportKey);
-                    });
-                });
-            }
-
-            // Open modal to view full problem
-            function openModal(problemDescription) {
-                Swal.fire({
-
-                    html: `<p>${problemDescription}</p>`,
-                    icon: "info",
-                    showCloseButton: true,
-
-                });
-            }
-
-            // Delete report
-            function deleteReport(key) {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to delete this report?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`${reportsUrl.replace(".json", `/${key}.json`)}`, {
-                            method: "DELETE",
-                        })
-                            .then((response) => response.json())
-                            .then(() => {
-                                Swal.fire("Deleted!", "The report has been deleted.", "success");
-                                fetchReports(); // Refresh the table after deletion
-                            })
-                            .catch((error) => {
-                                console.error("Error deleting report:", error);
-                                Swal.fire("Error!", "Could not delete the report. Try again later.", "error");
-                            });
-                    }
-                });
-            }
-
-            // Load reports on page load
-            fetchReports();
-        });
-
-    </script> -->
-
-
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const tableBody = document.getElementById("customerreports-table-body");
@@ -277,13 +151,13 @@
                                             <td>${report.customerName}</td>
                                             <td>${report.phoneNumber}</td>
                                             <td>${truncatedProblem}</td>
-                                            <td class="textalign">
+                                            <td class="textalign w-300">
                                                 <div class="flex">
                                                     <button class="btn-view formbold-form-label addbtn pointer open-order-btn p-7" data-key="${key}" data-fullproblem="${report.problemDescription}">
-                                                        <i class="bi bi-plus-circle point"></i>
+                                                        Show Report <i class="bi bi-plus-circle point"></i>
                                                     </button>
                                                     <button class="btn-delete formbold-form-label addbtn pointer open-order-btn p-7" data-key="${key}">
-                                                        <i class="bi bi-x-circle pointer"></i>
+                                                        Delete Report <i class="bi bi-x-circle pointer"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -292,6 +166,7 @@
                                         });
 
                                         addEventListeners(); // Add event listeners to buttons
+                                        document.getElementById('customer-reports').classList.remove("flex", "center");
                                     } else {
                                         tableBody.innerHTML = "<div class='text-center p-100'>No reports found</div>";
                                     }
@@ -328,21 +203,41 @@
                             });
                         }
 
-                        // Open modal to view full problem
                         function openModal(problemDescription) {
-                            Swal.fire({
-                                html: `<p>${problemDescription}</p>`,
-                                icon: "info",
-                                showCloseButton: true,
-                            });
+                            // Get the modal elements
+                            const modal = document.getElementById("reportModal");
+                            const modalTitle = document.getElementById("reportTitle");
+                            const modalContent = document.getElementById("reportDescription");
+                            const closeModalBtn = document.getElementById("closeReportModal");
+
+                            // Set content
+                            modalTitle.textContent = "Report Details"; // Change this as needed
+                            modalContent.value = problemDescription;
+
+                            // Show the modal
+                            modal.classList.add("show");
+
+                            // Close the modal when the close button is clicked
+                            closeModalBtn.onclick = function () {
+                                modal.classList.remove("show");
+                            };
+
+                            // Close the modal when clicking outside the modal content
+                            window.onclick = function (event) {
+                                if (event.target === modal) {
+                                    modal.classList.remove("show");
+                                }
+                            };
                         }
 
-                        // Delete report
+
                         function deleteReport(key) {
                             Swal.fire({
                                 title: "Are you sure?",
                                 text: "Do you want to delete this report?",
                                 icon: "warning",
+                                toast: true,
+                                position: "top-end",
                                 showCancelButton: true,
                                 confirmButtonColor: "#3085d6",
                                 cancelButtonColor: "#d33",
@@ -356,12 +251,26 @@
                                     })
                                         .then((response) => response.json())
                                         .then(() => {
-                                            Swal.fire("Deleted!", "The report has been deleted.", "success");
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "Report deleted!",
+                                                toast: true,
+                                                position: "top-end",
+                                                showConfirmButton: false,
+                                                timer: 3000,
+                                            });
                                             fetchReports(); // Refresh the table after deletion
                                         })
                                         .catch((error) => {
                                             console.error("Error deleting report:", error);
-                                            Swal.fire("Error!", "Could not delete the report. Try again later.", "error");
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "Could not delete the report!",
+                                                toast: true,
+                                                position: "top-end",
+                                                showConfirmButton: false,
+                                                timer: 3000,
+                                            });
                                         });
                                 }
                             });

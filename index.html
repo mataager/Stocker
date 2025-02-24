@@ -74,14 +74,9 @@
                                         <a href="#" class="navbar-link" onclick="changeFrameSrc('About.html')">About</a>
                                     </li> -->
                     <li class="navbar-item">
-                        <div class="flex align-items justify-content-space-between">
-                            <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
-                            <a id="open-category" class="rotate open-category open-category-btn"><i
-                                    class="bi bi-plus"></i></a>
-                        </div>
-
+                        <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                     </li>
-                    <li class="navbar-item hidden" id="megamenu" data-mega-menu>
+                    <li class="navbar-item" id="megamenu" style="display: none;" data-mega-menu>
                         <div class="flex align-items justify-content-space-between">
                             <a href="#" class="navbar-link" onclick="changeFrameSrc('Products.html')">Products</a>
                             <a id="open-category" class="rotate open-category open-category-btn"><i
@@ -188,21 +183,18 @@
 
 
             <section class="section hero" id="panner-img">
-                <div class="container panner-container">
+                <div class="container">
 
-                    <h2 class="h1 hero-title">
+
+                    <h2 class="h1 hero-title white-font">
                         Step Into Style with Our <strong>Premium Shoe Collection</strong>
                     </h2>
 
-                    <p class="hero-text" style="
-                        font-weight: 500;
-                        color: black;
-                    ">
+                    <p class="hero-text white-font">
                         Discover the perfect pair for every occasion. Our collection features original and high-quality
                         mirror-original
                         shoes for both gender.
                     </p>
-
                     <a href="./Products.html">
                         <button class="btn-shopnow">
                             <span>Shop Now</span>
@@ -217,7 +209,7 @@
 
             </section>
 
-            <div>
+            <div class="hidden">
                 <div id="men-area" class="hidden">
                     <section class="mt-40 flex flex-wrap">
 
@@ -282,7 +274,7 @@
                         </div>
                     </section>
                 </div>
-                <div id="men-footware-area" style="display: none;" class="hidden">
+                <div id="men-footware-area" class="hidden">
                     <section class="section collection py-50 px-20">
                         <div class="container flex">
                             <div class="flex flex-direction-column center p-10">
@@ -714,125 +706,10 @@
                 </div>
             </div>
 
-            <div class="scroll-container flex space-around height-max hidden" id="piece-choose">
-                <div class="flex center align-items m-20 shop-by-piece">
-                    <h4>Shop By Piece</h4>
-                </div>
 
-                <div class="scroll-container ">
-                    <a href="./Category.html?piece=T-Shirt">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/0sakCXs_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                T-shirts
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Polo-Shirt">
-                        <div class="scroll-item" style="background-image: url('https://i.imgur.com/AdMd7Ls.jpeg');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Polo Shirt
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Jeans">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/mncaF0c_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Jeans
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Short">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/ErdoQyD_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Shorts
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Shirt">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/Znqhncx_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Shirts
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Hoodie">
-                        <div class="scroll-item" style="background-image: url('https://i.imgur.com/389Wcvs.jpeg');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Hoodies
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Sweatshirt">
-                        <div class="scroll-item" style="background-image: url('https://i.imgur.com/dOfWBwl.jpeg');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Sweat Shirt
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Jacket">
-                        <div class="scroll-item" style="background-image: url('https://i.imgur.com/3jDvg2e.jpeg');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Jackets
-                            </div>
-                        </div>
-                    </a>
-                    </a>
-                    <a href="./Category.html?piece=Swimwear">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/xzdoYtt_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Swim Wear
-                            </div>
-                        </div>
-                    </a>
-                    <a href="./Category.html?piece=Underwear">
-                        <div class="scroll-item"
-                            style="background-image: url('https://i.imgur.com/iEoH0Vs_d.webp?maxwidth=760&fidelity=grand');">
-                            <div class="overlay-category">
-                                <i class="bi bi-arrow-right-short"></i>
-                                Underwear
-                            </div>
-                        </div>
-                    </a>
-
-
-                </div>
-
-
-                <!-- Add more items as needed -->
-
-            </div>
-
-            <div class="brand-container">
-                <div class="brand-wrapper">
-                    <img src="https://www.svgrepo.com/show/303470/puma-logo-logo.svg" alt="Puma Logo">
-                    <img src="https://www.svgrepo.com/show/303497/new-balance-2-logo.svg" alt="New Balance Logo">
-                    <img src="https://www.svgrepo.com/show/303339/adidas-9-logo.svg" alt="Adidas Logo">
-                    <img src="https://www.svgrepo.com/show/303155/under-armour-logo.svg" alt="Under Armour Logo">
-                    <img src="https://www.svgrepo.com/show/303173/nike-3-logo.svg" alt="Nike Logo">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Reebok_2019_logo.svg"
-                        alt="Reebok Logo">
-                    <img src="https://www.svgrepo.com/show/330747/jordan.svg" alt="Jordan Logo">
-                    <img src="https://www.svgrepo.com/show/330434/fila.svg" alt="Fila Logo">
-
-                </div>
-            </div>
 
             <section class="section product">
-                <div class="container">
+                <div class="container pt-15">
 
                     <h2 class="h2 section-title">Products Overview</h2>
 
@@ -966,6 +843,11 @@
         </div>
 
 
+    </div>
+    <div id="modal-fav" class="modal">
+        <div id="modal-fav-content" class="fav-modal-content">
+
+        </div>
     </div>
 
     <footer class="footer">
@@ -1169,6 +1051,7 @@
     <script src="./assets/js/rendering-megamenu.js"></script>
     <script src="./assets/js/rendering-collections.js"></script>
     <script src="./assets/js/rendering-search.js"></script>
+    <script src="./assets/js/addfavouriteproduct.js"></script>
 </body>
 
 </html>

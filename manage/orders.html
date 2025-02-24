@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
     <script src="./js/static.js"></script>
+    <script src="./js/preventClicks.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="./css/all.css">
     <link rel="stylesheet" href="./css/alll.css">
@@ -25,20 +26,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src="./js/NotoSansArabicBase64.js"></script>
 <script src="./js/inithialize-firebase.js"></script>
-<script>
-    function checkAuthAndRedirect() {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, continue to the page
-                //  console.log("User is signed in:", user.email);
-            } else {
-                // No user is signed in, redirect to login page
-                // console.log("User is not signed in, redirecting to login page...");
-                window.location.href = './index.html'; // Adjust the URL as needed
-            }
-        });
-    }
-</script>
+<script src="./js/checkUserAuthStatus.js"></script>
 <script src="./js/Logout.js"></script>
 
 <body id="top" onload="checkAuthAndRedirect()">
@@ -105,21 +93,21 @@
                     </div>
                 </div>
             </div>
-            <div class="flex center mb-20 flex-wrap mt-40">
-                <div class="m-LR-2 flex align-items mb-10" style="width:fit-content;margin-right: 5px;">
+            <div class="flex center align-items mb-20 flex-wrap mt-40">
+                <div class="m-LR-2 flex align-items" style="width:fit-content;margin-right: 5px;">
                     <div class="shadow">
                         <select style="font-size: small !important;font-style: normal;" name="category" id="category"
-                            class="formbold-form-input">
-                            <option value="men">Order-ID</option>
-                            <option value="women">Email</option>
-                            <option value="kids">Phone-num</option>
+                            class="formbold-form-input order-select">
+                            <option value="OrderID">Order-ID</option>
+                            <option value="Email">Email</option>
+                            <option value="Phone">Phone</option>
                         </select>
                     </div>
                 </div>
-                <div class="input-wrapper ">
+                <div class="input-wrapper order-search">
                     <input type="text" class="formbold-form-input w-300" id="product-id-input-del"
                         placeholder="Search among orders">
-                    <button id="sub-btn-del" type="button" class="h-44 " onclick="">
+                    <button id="sub-btn-del" type="button" onclick="">
                         <div id="sub-txt-del">
                             <i class="bi bi-search"></i>
                         </div>
@@ -127,20 +115,6 @@
                     </button>
                 </div>
             </div>
-            <!-- <div class="flex center mt-18 mb-20">
-                <button id="show-pending-btn" class="m-LR-2 flex center align-items btn-3"
-                    onclick="showpendingOrders()">
-                    <p class="white">pending Orders</p>
-                </button>
-                <button id="show-completed-btn" class="m-LR-2 flex center align-items btn-3"
-                    onclick="showCompletedOrders()">
-                    <p class="white">Completed Orders</p>
-                </button>
-                <button id="show-canceled-btn" class="m-LR-2 flex center align-items btn-3"
-                    onclick="showCanceledOrders()">
-                    <p class="white">Canceled Orders</p>
-                </button>
-            </div> -->
             <div id="pending-orders-section" class="mb-20">
                 <div class="flex center mb-20">
                     Pending orders
@@ -278,169 +252,9 @@
         <img class="modal-content" id="modalImage">
         <div id="caption"></div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="./js/orders.js"></script>
     <script src="./js/printer.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        // Function to show pending orders section
-        // Function to show pending orders section and highlight the button
-        function showpendingOrders() {
-            document.getElementById('pending-orders-section').classList.remove('hidden');
-            document.getElementById('completed-orders-section').classList.add('hidden');
-            document.getElementById('Canceled-orders-section').classList.add('hidden');
-
-
-
-            // Update button styles
-            document.getElementById('show-pending-btn').style.backgroundColor = '#6a64f142';
-            document.getElementById('show-completed-btn').style.backgroundColor = '';
-            document.getElementById('show-canceled-btn').style.backgroundColor = '';
-
-
-        }
-        function showCompletedOrders() {
-            const completedOrdersSection = document.getElementById('completed-orders-section');
-            const completedOrdersTableBody = document.getElementById('completed-orders-table-body');
-            const pendingOrdersSection = document.getElementById('pending-orders-section');
-            const canceledOrdersSection = document.getElementById('Canceled-orders-section');
-
-            // Toggle visibility
-            pendingOrdersSection.classList.add('hidden');
-            completedOrdersSection.classList.remove('hidden');
-            canceledOrdersSection.classList.add('hidden');
-
-            // Update button styles
-            document.getElementById('show-pending-btn').style.backgroundColor = '';
-            document.getElementById('show-completed-btn').style.backgroundColor = '#6a64f142';
-            document.getElementById('show-canceled-btn').style.backgroundColor = '';
-
-            // Check if the completed orders table is empty
-
-        }
-        function showCanceledOrders() {
-            const canceledOrdersSection = document.getElementById('Canceled-orders-section');
-            const canceledOrdersTableBody = document.getElementById('Canceled-orders-table-body');
-            const pendingOrdersSection = document.getElementById('pending-orders-section');
-            const completedOrdersSection = document.getElementById('completed-orders-section');
-
-            // Toggle visibility
-            pendingOrdersSection.classList.add('hidden');
-            completedOrdersSection.classList.add('hidden');
-            canceledOrdersSection.classList.remove('hidden');
-
-            // Update button styles
-            document.getElementById('show-pending-btn').style.backgroundColor = '';
-            document.getElementById('show-completed-btn').style.backgroundColor = '';
-            document.getElementById('show-canceled-btn').style.backgroundColor = '#6a64f142';
-
-            // Check if the canceled orders table is empty
-
-        }
-
-        $(document).ready(function () {
-            // Search functionality for all three sections
-            $('#sub-btn-del').click(function () {
-                const searchType = $('#category').val(); // Get selected search type
-                const searchValue = $('#product-id-input-del').val().toLowerCase(); // Get the search input value
-
-                if (searchValue === "") {
-                    // Show SweetAlert with no confirm button
-                    Swal.fire({
-                        title: "Please enter a search term.",
-                        icon: "warning",
-                        showConfirmButton: false,
-                        timer: 1500,  // Automatically closes after 1.5 seconds
-                    });
-                    return;
-                }
-
-                let found = false;
-
-                // Hide all rows initially
-                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').hide();
-                $('#pending-orders-section, #completed-orders-section, #Canceled-orders-section').addClass('hidden');
-
-                // Determine where to search based on the selected type
-                let columnIndex;
-                switch (searchType) {
-                    case "men": // Order-ID
-                        columnIndex = 0;
-                        break;
-                    case "women": // Email
-                        columnIndex = 2;
-                        break;
-                    case "kids": // Phone-num
-                        columnIndex = 5;
-                        break;
-                    default:
-                        return;
-                }
-
-                // Search through each row in the tables
-                $('#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr').each(function () {
-                    const row = $(this);
-                    const cellValue = row.find('td').eq(columnIndex).text().toLowerCase();
-
-                    if (cellValue.includes(searchValue)) {
-                        row.show(); // Show only the rows that match
-                        found = true;
-
-                        // Show the section where the result is found
-                        if (row.closest('tbody').is('#orders-table-body')) {
-                            $('#pending-orders-section').removeClass('hidden');
-                            // Apply background color to the "Pending" button
-                            $('#show-pending-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        } else if (row.closest('tbody').is('#completed-orders-table-body')) {
-                            $('#completed-orders-section').removeClass('hidden');
-                            // Apply background color to the "Completed" button
-                            $('#show-completed-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        } else if (row.closest('tbody').is('#Canceled-orders-table-body')) {
-                            $('#Canceled-orders-section').removeClass('hidden');
-                            // Apply background color to the "Canceled" button
-                            $('#show-canceled-btn').css('background-color', '#6a64f142').siblings().css('background-color', '');
-                        }
-                    }
-                });
-
-                if (!found) {
-                    // Show SweetAlert with no confirm button
-                    Swal.fire({
-                        title: "No matching orders found.",
-                        icon: "info",
-                        showConfirmButton: false,
-                        timer: 1500,  // Automatically closes after 1.5 seconds
-                    });
-                }
-            });
-
-            // Reset search functionality when input changes
-            $('#product-id-input-del').on('input', function () {
-                const searchValue = $(this).val();
-
-                if (searchValue === "") {
-                    // Reset to show all orders (pending, completed, canceled)
-                    $('#orders-table-body tr').show();
-                    $('#completed-orders-table-body tr').show();
-                    $('#Canceled-orders-table-body tr').show();
-
-                    // Show all sections
-                    $('#pending-orders-section').addClass('hidden');
-                    $('#completed-orders-section').addClass('hidden');
-                    $('#Canceled-orders-section').addClass('hidden');
-
-                    $('#pending-orders-section').removeClass('hidden');
-
-                    // Reset button background colors
-                    $('#show-completed-btn,#show-pending-btn,#show-canceled-btn').css('background-color', '');
-
-                    // Clear the search input
-                    $('#product-id-input-del').val('');
-                }
-            });
-        });
-
-    </script>
 
 </body>
 

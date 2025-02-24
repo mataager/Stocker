@@ -56,7 +56,8 @@ body {
   border-radius: 15px;
   cursor: pointer;
   position: relative;
-  transition: box-shadow 0.25s;
+
+  transition: all 0.3s ease-in-out !important;
 
   &::before {
     content: "";
@@ -136,7 +137,7 @@ body {
       filter: blur(35px);
       opacity: var(--card-shine-opacity);
       transform: translateX(-50%);
-      background-image: var(--card-shine-gradient);
+      /* background-image: var(--card-shine-gradient); */
     }
   }
 
@@ -347,8 +348,8 @@ body {
 
     .icon {
       &::after {
-        background-color: var(--card-hover-icon-background-color);
-        border-color: var(--card-hover-icon-border-color);
+        background-color: #536387;
+        border-color: #536387;
       }
 
       svg {

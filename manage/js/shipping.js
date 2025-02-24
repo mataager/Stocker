@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   fetchOrdersByStatus();
 });
-
 async function fetchOrdersByStatus() {
   const preloader = document.getElementById("preloader");
 
@@ -18,6 +17,12 @@ async function fetchOrdersByStatus() {
   const returnedOrdersTableBody = document.getElementById(
     "returned-orders-table-body"
   );
+
+  // Define counters for each status
+  let completedCount = 0;
+  let shippedCount = 0;
+  let deliveredCount = 0;
+  let returnedCount = 0;
 
   try {
     // Show the preloader
@@ -37,22 +42,53 @@ async function fetchOrdersByStatus() {
     deliveredOrdersTableBody.innerHTML = "";
     returnedOrdersTableBody.innerHTML = "";
 
+    // if (!data) {
+    //   console.log("No orders found.");
+    //   [
+    //     "completed-orders-content",
+    //     "shipped-orders-content",
+    //     "delivered-orders-content",
+    //     "returned-orders-content",
+    //   ].forEach((contentId) => {
+    //     checkAndDisplayEmptyMessage(
+    //       `${contentId}-table-body`,
+    //       contentId,
+    //       `No ${contentId
+    //         .replace("-content", "")
+    //         .replace("-", " ")} orders yet.`
+    //     );
+    //   });
+    //   return;
+    // }
+
     if (!data) {
       console.log("No orders found.");
+
       [
         "completed-orders-content",
         "shipped-orders-content",
         "delivered-orders-content",
         "returned-orders-content",
       ].forEach((contentId) => {
-        checkAndDisplayEmptyMessage(
-          `${contentId}-table-body`,
-          contentId,
-          `No ${contentId
+        const tableBody = document.getElementById(`${contentId}-table-body`);
+        const contentDiv = document.getElementById(contentId);
+
+        if (!tableBody || tableBody.children.length === 0) {
+          // Remove existing empty message if present
+          const existingMessage = contentDiv.querySelector(".empty-message");
+          if (existingMessage) existingMessage.remove();
+
+          // Create new empty message
+          const emptyMessage = document.createElement("div");
+          emptyMessage.className = "empty-message";
+          emptyMessage.textContent = `No ${contentId
             .replace("-content", "")
-            .replace("-", " ")} orders yet.`
-        );
+            .replace("-", " ")} orders yet.`;
+
+          contentDiv.appendChild(emptyMessage);
+        }
       });
+
       return;
     }
 
@@ -79,43 +115,41 @@ async function fetchOrdersByStatus() {
       row.classList.add("point", "order-tr");
       row.setAttribute("data-order-id", orderId);
 
-      // Determine buttons to show based on status
+      // Determine button states and labels
       const isCompleted =
         order.progress === "accepted" && !order.shippingstatus;
 
-      const returnedButtonHTML = isCompleted
-        ? ""
-        : `<button type="button" class="addbtn pointer returned accept-order-btn p-7" data-order-id="${orderId}" id="" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'returned', event)">
-             <p>Mark As Returned</p> <i class="bi bi-arrow-counterclockwise"></i>
-           </button>`;
+      const returnedButtonHTML =
+        order.shippingstatus === "Returned"
+          ? `<button type="button" class="addbtn pointer accept-order-btn out-for-shipping p-7" data-order-id="${orderId}" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'shipped', event)">
+         <p>Mark As Shipped</p> <i class="bi bi-truck"></i>
+       </button>`
+          : "";
 
-      const deliveredButtonHTML = isCompleted
-        ? ""
-        : `<button type="button" class="addbtn pointer delivered accept-order-btn p-7" data-order-id="${orderId}" id="" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'delivered', event)">
-             <p>Mark As Delivered</p> <i class="bi bi-box-seam"></i>
-           </button>`;
+      const deliveredButtonHTML =
+        order.shippingstatus === "Delivered"
+          ? `<button type="button" class="addbtn pointer delivered accept-order-btn p-7 delivered-disabled" disabled>
+         <p>Delivered</p> <i class="bi bi-check"></i>
+       </button>
+       <button type="button" class="addbtn pointer accept-order-btn out-for-shipping p-7" data-order-id="${orderId}" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'returned', event)">
+         <p>Mark As Returned</p> <i class="bi bi-arrow-counterclockwise"></i>
+       </button>`
+          : isCompleted
+          ? ""
+          : `<button type="button" class="addbtn pointer delivered accept-order-btn p-7" data-order-id="${orderId}" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'delivered', event)">
+         <p>Mark As Delivered</p> <i class="bi bi-box-seam"></i>
+       </button>`;
 
-      const shippedButtonHTML = `
-        <button type="button" class="addbtn pointer accept-order-btn out-for-shipping p-7 ${
-          order.shippingstatus === "shipped, in the way to you."
-            ? "shipped-disabled"
-            : ""
-        }" data-order-id="${orderId}" ${
-        order.shippingstatus === "shipped, in the way to you."
-          ? 'disabled="disabled"'
-          : `onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'shipped', event)"`
-      } >
-          <p>${
-            order.shippingstatus === "shipped, in the way to you."
-              ? "Shipped"
-              : "Mark As Shipped"
-          }</p>
-          <i class="bi ${
-            order.shippingstatus === "shipped, in the way to you."
-              ? "bi-check"
-              : "bi-truck"
-          }"></i>
-        </button>`;
+      const shippedButtonHTML =
+        order.shippingstatus === "Delivered" ||
+        order.shippingstatus === "Shipped"
+          ? `<button type="button" class="addbtn pointer accept-order-btn out-for-shipping p-7 shipped-disabled" disabled>
+         <p>${order.shippingstatus === "Delivered" ? "Shipped" : "Shipped"}</p>
+         <i class="bi bi-check"></i>
+       </button>`
+          : `<button type="button" class="addbtn pointer accept-order-btn out-for-shipping p-7" data-order-id="${orderId}" onclick="updateShippingStatus('${orderId}','${Customeruid}','${cutomerorderuid}', 'shipped', event)">
+         <p>Mark As Shipped</p> <i class="bi bi-truck"></i>
+       </button>`;
 
       row.innerHTML = `
         <td>${orderId}</td>
@@ -137,8 +171,11 @@ async function fetchOrdersByStatus() {
         <td>${order.shippingFees} EGP</td>
         <td>${totalPrice.toFixed(2)} EGP</td>
         <td class="flex center align items w-800">
-          ${shippedButtonHTML}
-          ${returnedButtonHTML}
+          ${
+            order.shippingstatus === "Returned"
+              ? returnedButtonHTML
+              : shippedButtonHTML
+          }
           ${deliveredButtonHTML}
           <button type="button" class="addbtn accept-order-btn pointer p-7" onclick="print('${orderId}')">
             <p>Print Order</p><i class="bi bi-printer"></i>
@@ -148,15 +185,19 @@ async function fetchOrdersByStatus() {
 
       // Append the row to the appropriate table based on the status
       if (isCompleted) {
+        completedCount++;
         row.classList.add("green-tr");
         completedOrdersTableBody.appendChild(row);
-      } else if (order.shippingstatus === "shipped, in the way to you.") {
+      } else if (order.shippingstatus === "Shipped") {
+        shippedCount++;
         row.classList.add("blue-tr");
         shippedOrdersTableBody.appendChild(row);
       } else if (order.shippingstatus === "Delivered") {
+        deliveredCount++;
         row.classList.add("light-move-tr");
         deliveredOrdersTableBody.appendChild(row);
       } else if (order.shippingstatus === "Returned") {
+        returnedCount++;
         row.classList.add("orange-tr");
         returnedOrdersTableBody.appendChild(row);
       }
@@ -168,17 +209,21 @@ async function fetchOrdersByStatus() {
     });
 
     // Handle empty messages for each section
-    ["completed", "shipped", "delivered", "returned"].forEach((status) => {
-      const body = document.getElementById(`${status}-orders-table-body`);
-      const content = document.getElementById(`${status}-orders-content`);
-      if (!body.children.length) {
-        checkAndDisplayEmptyMessage(
-          `${status}-orders-table-body`,
-          `${status}-orders-content`,
-          `No ${status} orders yet.`
-        );
-      }
-    });
+    // ["completed", "shipped", "delivered", "returned"].forEach((status) => {
+    //   const body = document.getElementById(`${status}-orders-table-body`);
+    //   const content = document.getElementById(`${status}-orders-content`);
+    //   if (!body.children.length) {
+    //     checkAndDisplayEmptyMessage(
+    //       `${status}-orders-table-body`,
+    //       `${status}-orders-content`,
+    //       `No ${status} orders yet.`
+    //     );
+    //   }
+    // });
+    document.getElementById("completed-count").innerText = completedCount;
+    document.getElementById("shipped-count").innerText = shippedCount;
+    document.getElementById("delivered-count").innerText = deliveredCount;
+    document.getElementById("returned-count").innerText = returnedCount;
   } catch (error) {
     console.error("Error fetching orders:", error);
   } finally {
@@ -193,9 +238,34 @@ async function toggleOrderDetails(event) {
 
   // Check if the next row is already the details row
   if (nextRow && nextRow.classList.contains("order-details")) {
-    // Collapse to hide cart items
-    nextRow.remove();
+    // Set initial height for smooth transition
+    nextRow.style.height = `${nextRow.scrollHeight}px`; // Set to current height
+    nextRow.style.opacity = "1";
+    nextRow.style.transition = "height 0.6s ease-out, opacity 0.6s ease-out";
+
+    // Trigger the collapse transition
+    setTimeout(() => {
+      nextRow.style.height = "0";
+      nextRow.style.opacity = "0";
+    }, 15);
+
+    // Remove the row after the transition completes
+    nextRow.addEventListener(
+      "transitionend",
+      (event) => {
+        if (event.propertyName === "height" && nextRow.style.height === "0px") {
+          nextRow.remove();
+        }
+      },
+      { once: true }
+    );
+    row.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "start",
+    });
   } else {
+    disableInteractions(event);
     // Add wave loading effect
     row.classList.add("wave-loading");
 
@@ -256,7 +326,26 @@ async function toggleOrderDetails(event) {
           </table>
         </td>
       `;
+
+      // Set initial state for animation
+      detailsRow.style.maxHeight = "0";
+      detailsRow.style.opacity = "0";
+      detailsRow.style.overflow = "hidden";
+      detailsRow.style.transition =
+        "height 0.6s ease-out, opacity 0.6s ease-out";
+
       row.after(detailsRow);
+
+      setTimeout(() => {
+        detailsRow.style.maxHeight = `${detailsRow.scrollHeight}px`;
+        detailsRow.style.opacity = "1";
+      }, 15);
+      // Scroll to the first row both horizontally and vertically
+      row.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
 
       // Attach click event to images
       document.querySelectorAll(".clickable-image").forEach((img) => {
@@ -265,6 +354,7 @@ async function toggleOrderDetails(event) {
     } catch (error) {
       console.error("Error fetching order details:", error);
     } finally {
+      enableInteractions();
       // Remove the wave-loading effect after 2 seconds
       row.classList.remove("wave-loading");
     }
@@ -279,19 +369,27 @@ const span = document.getElementsByClassName("close")[0];
 
 function openModal(event) {
   event.stopPropagation(); // Prevent triggering row click event
-  modal.style.display = "block";
+  modal.classList.add("show", "flex", "column");
+  modalImg.style.background = "none"; // Removes background
   modalImg.src = event.target.src;
   captionText.innerHTML = event.target.alt;
 }
 span.onclick = function () {
-  modal.style.display = "none";
+  closeModal();
 };
 
 window.onclick = function (event) {
   if (event.target == modal) {
-    modal.style.display = "none";
+    closeModal();
   }
 };
+
+function closeModal() {
+  modal.classList.add("zoom-out"); // Add zoom-out animation
+  setTimeout(() => {
+    modal.classList.remove("show", "zoom-out"); // Remove after animation
+  }, 600); // Match animation-duration (0.6s)
+}
 
 async function updateShippingStatus(
   orderId,
@@ -315,10 +413,13 @@ async function updateShippingStatus(
   const user = firebase.auth().currentUser;
   if (!user) {
     Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "warning",
       title: "Authentication Required!",
       text: "You need to be signed in to update the order status.",
-      icon: "warning",
-      confirmButtonText: "Okay",
+      showConfirmButton: false,
+      timer: 3000, // Auto-closes after 3 seconds
     });
     return; // Exit if the user is not authenticated
   }
@@ -337,11 +438,11 @@ async function updateShippingStatus(
             Authorization: `Bearer ${idToken}`,
           },
           body: JSON.stringify({
-            shippingstatus: "shipped, in the way to you.",
+            shippingstatus: "Shipped",
           }),
         }
       );
-      const shippedStatus = "shipped, in the way to you.";
+      const shippedStatus = "Shipped";
       // Update the customer's order history as well
       await updateCustomerOrder(
         customerUid,
@@ -358,6 +459,7 @@ async function updateShippingStatus(
       const completedOrdersTableBody = document.getElementById(
         "completed-orders-table-body"
       );
+      disableInteractions(event);
       const acceptedRow = row.cloneNode(true);
       acceptedRow.querySelector(".accept-order-btn")?.remove();
       acceptedRow.querySelector(".delete-order-btn")?.remove();
@@ -365,11 +467,16 @@ async function updateShippingStatus(
       row.remove(); // Remove from the current table
 
       Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
         title: "Shipped!",
         text: "Order has been marked as shipped.",
-        icon: "success",
+        showConfirmButton: false,
+        timer: 3000, // Auto-closes after 3 seconds
       }).then(() => {
         // location.reload();
+        enableInteractions();
       });
     } else if (status === "delivered") {
       // Update the status in the store's order database with ID token
@@ -403,6 +510,7 @@ async function updateShippingStatus(
       const completedOrdersTableBody = document.getElementById(
         "completed-orders-table-body"
       );
+      disableInteractions(event);
       const acceptedRow = row.cloneNode(true);
       acceptedRow.querySelector(".accept-order-btn")?.remove();
       acceptedRow.querySelector(".delete-order-btn")?.remove();
@@ -413,8 +521,14 @@ async function updateShippingStatus(
         title: "Delivered",
         text: "Order has been marked as Delivered.",
         icon: "success",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
       }).then(() => {
         // location.reload();
+        enableInteractions();
       });
     } else if (status === "returned") {
       // Update the status in the store's order database with ID token
@@ -458,6 +572,11 @@ async function updateShippingStatus(
         title: "Returned",
         text: "Order has been marked as Returned.",
         icon: "success",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
       }).then(() => {
         // location.reload();
       });
@@ -470,6 +589,11 @@ async function updateShippingStatus(
       title: "Error",
       text: `Failed to update order status: ${error.message}`,
       icon: "error",
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
     });
   }
 }
@@ -499,3 +623,233 @@ async function updateCustomerOrder(
     throw error; // Re-throw the error to be handled by the caller
   }
 }
+
+//
+function showOrderSection(sectionId) {
+  const sections = [
+    "completed-orders-section",
+    "shipped-orders-section",
+    "delivered-orders-section",
+    "returned-orders-section",
+  ];
+
+  const buttons = [
+    "show-completed-btn",
+    "show-shipped-btn",
+    "show-delivered-btn",
+    "show-returned-btn",
+  ];
+
+  // Loop through all sections
+  sections.forEach((id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      if (id === sectionId) {
+        section.classList.remove("hidden"); // Show the selected section
+      } else {
+        section.classList.add("hidden"); // Hide the others
+      }
+    }
+  });
+
+  // Update button styles
+  buttons.forEach((btnId) => {
+    const button = document.getElementById(btnId);
+    if (button) {
+      if (btnId === `show-${sectionId.split("-")[0]}-btn`) {
+        button.style.backgroundColor = "#6a64f142"; // Highlight active button
+      } else {
+        button.style.backgroundColor = ""; // Reset others
+      }
+    }
+  });
+}
+
+//
+function searchonmap(address, event) {
+  event.stopPropagation(); // Prevents the row click event from being triggered
+  // Create a URL for the Google Maps search
+  var url = "https://maps.google.com/maps?q=" + encodeURIComponent(address);
+  // Open the URL in a new tab
+  window.open(url, "_blank");
+}
+
+function copytoclipbarod(address, event) {
+  event.stopPropagation(); // Prevents the row click event from being triggered
+
+  // Create a textarea element to hold the address
+  var textarea = document.createElement("textarea");
+  textarea.value = address;
+
+  // Add the textarea to the page
+  document.body.appendChild(textarea);
+
+  // Select the textarea
+  textarea.select();
+
+  // Copy the address to the clipboard
+  document.execCommand("copy");
+
+  // Remove the textarea from the page
+  document.body.removeChild(textarea);
+
+  // Determine which element was clicked
+  var clickedElement = event.currentTarget;
+
+  // Get the icon within the clicked element
+  var icon = clickedElement.querySelector("i");
+
+  // Change the icon to a checkmark
+  if (icon) {
+    icon.classList.remove("bi-copy"); // Remove the existing icon class
+    icon.classList.add("bi-check-circle"); // Add the checkmark icon class
+
+    // Revert back to the original icon after 1 second
+    setTimeout(function () {
+      icon.classList.remove("bi-check-circle");
+      icon.classList.add("bi-copy");
+    }, 1000);
+  }
+}
+$(document).ready(function () {
+  // Search functionality for all three sections
+  $("#sub-btn-del").click(function () {
+    const searchType = $("#category").val(); // Get selected search type
+    const searchValue = $("#product-id-input-del").val().toLowerCase(); // Get the search input value
+
+    if (searchValue === "") {
+      // Show SweetAlert with no confirm button
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Please enter a search term.",
+        showConfirmButton: false,
+        timer: 1500, // Auto-close after 1.5 seconds
+      });
+
+      return;
+    }
+
+    let found = false;
+
+    // Hide all rows initially
+    $(
+      "#orders-table-body tr, #completed-orders-table-body tr, #shipped-orders-table-body tr, #delivered-orders-table-body tr, #returned-orders-table-body tr"
+    ).hide();
+    $(
+      "#completed-orders-section #shipped-orders-section, #delivered-orders-section,#returned-orders-section"
+    ).addClass("hidden");
+
+    // Determine where to search based on the selected type
+    let columnIndex;
+    switch (searchType) {
+      case "OrderID": // Order-ID
+        columnIndex = 0;
+        break;
+      case "Email": // Email
+        columnIndex = 2;
+        break;
+      case "Phone": // Phone-num
+        columnIndex = 5;
+        break;
+      default:
+        return;
+    }
+
+    // Search through each row in the tables
+    $(
+      "#orders-table-body tr, #completed-orders-table-body tr, #shipped-orders-table-body tr, #delivered-orders-table-body tr, #returned-orders-table-body tr"
+    ).each(function () {
+      const row = $(this);
+      const cellValue = row.find("td").eq(columnIndex).text().toLowerCase();
+
+      if (cellValue.includes(searchValue)) {
+        row.show(); // Show only the rows that match
+        found = true;
+
+        // Show the section where the result is found
+        if (row.closest("tbody").is("#orders-table-body")) {
+          $("#completed-orders-section").removeClass("hidden");
+          // Apply background color to the "Pending" button
+          $("#show-completed-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#completed-orders-table-body")) {
+          $("#completed-orders-section").removeClass("hidden");
+          // Apply background color to the "Completed" button
+          $("#show-completed-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#shipped-orders-table-body")) {
+          $("#shipped-orders-section").removeClass("hidden");
+          // Apply background color to the "Completed" button
+          $("#completed-orders-section").addClass("hidden");
+          $("#show-shipped-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#returned-orders-table-body")) {
+          $("#returned-orders-section").removeClass("hidden");
+          $("#completed-orders-section").addClass("hidden");
+          // Apply background color to the "Completed" button
+          $("#show-returned-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#delivered-orders-table-body")) {
+          $("#delivered-orders-section").removeClass("hidden");
+          $("#completed-orders-section").addClass("hidden");
+          // Apply background color to the "Completed" button
+          $("#show-delivered-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        }
+      }
+    });
+
+    if (!found) {
+      // Show SweetAlert with no confirm button
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "info",
+        title: "No matching orders found.",
+        showConfirmButton: false,
+        timer: 1500, // Auto-close after 1.5 seconds
+      });
+    }
+  });
+
+  // Reset search functionality when input changes
+  $("#product-id-input-del").on("input", function () {
+    const searchValue = $(this).val();
+
+    if (searchValue === "") {
+      $("#orders-table-body tr").show();
+      $("#completed-orders-table-body tr").show();
+      $("#shipped-orders-table-body tr").show();
+      $("#delivered-orders-table-body tr").show();
+      $("#returned-orders-table-body tr").show();
+
+      // Show all sections
+      $("#completed-orders-section").addClass("hidden");
+      $("#shipped-orders-section").addClass("hidden");
+      $("#delivered-orders-section").addClass("hidden");
+      $("#returned-orders-section").addClass("hidden");
+
+      $("#completed-orders-section").removeClass("hidden");
+
+      // Reset button background colors
+      $(
+        "#show-completed-btn,#show-shipped-btn,#show-delivered-btn,#show-returned-btn"
+      ).css("background-color", "");
+
+      // Clear the search input
+      $("#product-id-input-del").val("");
+    }
+  });
+});

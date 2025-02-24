@@ -269,51 +269,116 @@ async function updateUI(user) {
             const orderEntries = Object.entries(orderHistory).reverse(); // Reverse the order
 
             orderEntries.forEach(([key, orderData]) => {
+              // Normalize and ensure default values for progress and shippingStatus
+              const progress =
+                orderData.progress?.trim().toLowerCase() || "unknown";
+              const shippingStatus = orderData.shippingstatus
+                ?.trim()
+                .toLowerCase();
+
+              // Initialize step classes and progress bars
+              let step1Class = "";
+              let step2Class = "";
+              let step3Class = "";
+              let bar1Class = "";
+              let bar2Class = "";
+
+              // Initialize a flag to determine if the progress container should be hidden
+              let hideProgressContainer = false;
+
+              // Check if we need to hide the progress container
+              if (shippingStatus === "returned" || progress === "pending") {
+                hideProgressContainer = true;
+              } else if (!shippingStatus) {
+                // If shippingStatus is undefined, mark only "Order Preparing" as active
+                step1Class = "active";
+              } else {
+                // Determine the active steps and bars based on progress and shippingStatus
+                switch (shippingStatus) {
+                  case "shipped":
+                    step1Class = "active";
+                    step2Class = "active";
+                    bar1Class = "active";
+                    break;
+                  case "delivered":
+                    step1Class = "active";
+                    step2Class = "active";
+                    step3Class = "active";
+                    bar1Class = "active";
+                    bar2Class = "active";
+                    break;
+                  default:
+                    console.warn(
+                      `Unrecognized shippingStatus for order ${key}: ${shippingStatus}`
+                    );
+                    break;
+                }
+              }
+
               // Start building the order card
               let orderCardHTML = `
-              <div class="order-card">
-              <span class="shipping-status status">${
-                orderData.shippingstatus
-              }</span>
-                <div class="order-header">
-                  <h5 class="flex"><p>${key}</p></h5>
-                  <div class="flex align-items flex-direction-column gap-10">
-                  
-                    <span class="status ${orderData.progress.toLowerCase()}">${
-                orderData.progress
-              }</span>
-                    <span class="payment-card">${orderData.payment}</span>
-                  </div>
-                </div>
-                <div class="order-details">
-            `;
+    <div class="order-card">
+      ${
+        hideProgressContainer
+          ? ""
+          : `<div id="progress-container">
+              <!-- Step 1 -->
+              <div class="progress-step ${step1Class}" title="Order Preparing" id="step-1">
+                <i class="fa-solid fa-boxes-packing"></i>
+              </div>
+              <!-- Progress bar -->
+              <div class="progress-bar-status ${bar1Class}" id="bar-1"></div>
+              <!-- Step 2 -->
+              <div class="progress-step ${step2Class}" title="Out for Delivery" id="step-2">
+                <i class="fa-solid fa-parachute-box"></i>
+              </div>
+              <!-- Progress bar -->
+              <div class="progress-bar-status ${bar2Class}" id="bar-2"></div>
+              <!-- Step 3 -->
+              <div class="progress-step ${step3Class}" title="Delivered" id="step-3">
+                <i class="fa-solid fa-box"></i>
+              </div>
+            </div>`
+      }
+
+      <div class="order-header gap-10">
+        <h5 class="flex"><p>${key}</p></h5>
+        <div class="flex align-items gap-10">
+          <span class="status ${
+            shippingStatus || orderData.progress.toLowerCase()
+          }">${shippingStatus ? shippingStatus : orderData.progress}</span>
+          <span class="payment-card">${orderData.payment}</span>
+        </div>
+      </div>
+
+      <div class="order-details">
+  `;
 
               // Loop through all items in the `order` array
               orderData.order.forEach((item) => {
                 orderCardHTML += `
-                <div class="order-item">
-                  <div class="img-container">
-                    <img src="${item.photo}" alt="${item.title}">
-                    <div class="qty-circle">${item.qty || 0}</div>
-                  </div>
-                  <span>${item.title || "Unknown"}</span>
-                  <span>${
-                    (parseFloat(item.price) * parseInt(item.qty || 0)).toFixed(
-                      2
-                    ) || "Unknown"
-                  }</span>
-                </div>
-              `;
+      <div class="order-item">
+        <div class="img-container">
+          <img src="${item.photo}" alt="${item.title}">
+          <div class="qty-circle">${item.qty || 0}</div>
+        </div>
+        <span>${item.title || "Unknown"}</span>
+        <span>${
+          (parseFloat(item.price) * parseInt(item.qty || 0)).toFixed(2) ||
+          "Unknown"
+        }</span>
+      </div>
+    `;
               });
 
               // Close the order-details and add actions
               orderCardHTML += `
-                </div>
-                <div class="order-actions">
-                  <button onclick="printinvoice('${key}', '${uid}', '${token}')" class="btn-view">Print Invoice</button>
-                </div>
-              </div>
-            `;
+    </div>
+    <div class="order-actions">
+      <button onclick="printinvoice('${key}', '${uid}', '${token}')" class="btn-view">Print Invoice</button>
+    </div>
+  </div>
+  `;
 
               // Append the order card to the grid
               orderHistoryGrid.insertAdjacentHTML("beforeend", orderCardHTML);
@@ -817,6 +882,60 @@ async function uploadAvatar(avatarUrl) {
     saveChangesButton.classList.add("hidden");
   }
 }
+
+//
+document.addEventListener("DOMContentLoaded", () => {
+  // Event delegation for dynamically added progress steps
+  document.body.addEventListener("click", (event) => {
+    const getImageUrlWithTimestamp = (baseImageUrl) =>
+      `${baseImageUrl}?t=${Date.now()}`;
+
+    if (event.target.closest("#step-1")) {
+      Swal.fire({
+        title: "Order is Preparing",
+        text: "Your order is being prepared and will be shipped soon.",
+        // imageUrl: getImageUrlWithTimestamp("./assets/images/preparing.svg"), // Add timestamp to URL
+        imageUrl: getImageUrlWithTimestamp(
+          "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1736950755/Store1/Checking_boxes_s6v3ex.gif"
+        ), // Add timestamp to URL
+        imageWidth: 150,
+        imageHeight: 150,
+        imageAlt: "Preparing Order Image",
+        confirmButtonText: "Okay",
+      });
+    } else if (event.target.closest("#step-2")) {
+      Swal.fire({
+        title: "Out for Delivery",
+        text: "Your order is on the way and will reach you shortly.",
+        // imageUrl: getImageUrlWithTimestamp(
+        //   "./assets/images/outfordelivery.svg"
+        // ), // Add timestamp to URL
+        imageUrl: getImageUrlWithTimestamp(
+          "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1736950790/Store1/Delivery_unjohz.gif"
+        ), // Add timestamp to URL
+        imageWidth: 150,
+        imageHeight: 150,
+        imageAlt: "Out for Delivery Image",
+        confirmButtonText: "Okay",
+      });
+    } else if (event.target.closest("#step-3")) {
+      Swal.fire({
+        title: "Order Delivered",
+        text: "Your order has been successfully delivered. Thank you!",
+        // imageUrl: getImageUrlWithTimestamp("./assets/images/deliverd.svg"), // Add timestamp to URL
+        imageUrl: getImageUrlWithTimestamp(
+          "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1736950772/Store1/In_no_time_yifqey.gif"
+        ),
+        imageWidth: 150,
+        imageHeight: 150,
+        imageAlt: "Delivered Order Image",
+        confirmButtonText: "Okay",
+      });
+    }
+  });
+});
+
+//
 
 // async function uploadAvatar(avatarUrl) {
 //   const preloader = document.getElementById("save-btn-preloader");

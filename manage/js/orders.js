@@ -270,7 +270,11 @@ document.addEventListener("DOMContentLoaded", () => {
         title: "Authentication Required!",
         text: "You need to be signed in to update the order status.",
         icon: "warning",
-        confirmButtonText: "Okay",
+        toast: true,
+        position: "top-end", // Positions toast in the top-right corner
+        showConfirmButton: false,
+        timer: 3000, // Closes after 3 seconds
+        timerProgressBar: true, // Adds a progress bar
       });
       return; // Exit if the user is not authenticated
     }
@@ -365,10 +369,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         Swal.fire({
           title: "Accepted!",
-          text: `Order has been accepted.`,
+          text: "Order has been accepted.",
           icon: "success",
+          toast: true,
+          position: "top-end", // Positions toast in the top-right corner
+          showConfirmButton: false,
+          timer: 3000, // Closes after 3 seconds
+          timerProgressBar: true, // Adds a progress bar
         }).then(() => {
-          location.reload();
+          location.reload(); // Reloads page after toast disappears
         });
       } else if (status === "deleted") {
         // Show confirmation alert with password input before deleting the order
@@ -482,11 +491,15 @@ document.addEventListener("DOMContentLoaded", () => {
           title: "Success",
           text: `Order status updated to ${status}`,
           icon: "success",
+          toast: true,
+          position: "top-end", // Top-right corner
+          showConfirmButton: false,
+          timer: 3000, // Closes after 3 seconds
+          timerProgressBar: true, // Shows a progress bar
         }).then(() => {
-          location.reload();
+          location.reload(); // Reloads the page after the toast disappears
         });
       }
-
       // Update table visibility
       updateTableVisibility();
     } catch (error) {
@@ -495,6 +508,11 @@ document.addEventListener("DOMContentLoaded", () => {
         title: "Error",
         text: `Failed to update order status: ${error.message}`,
         icon: "error",
+        toast: true,
+        position: "top-end", // Top-right corner
+        showConfirmButton: false,
+        timer: 4000, // Closes after 4 seconds
+        timerProgressBar: true, // Shows a progress bar
       });
     }
   }
@@ -585,90 +603,44 @@ document.addEventListener("click", function (event) {
   }
 });
 
-// async function toggleOrderDetails(event) {
-//   const row = event.currentTarget;
-//   const nextRow = row.nextElementSibling;
-
-//   // Check if the next row is already the details row
-//   if (nextRow && nextRow.classList.contains("order-details")) {
-//     // Collapse to hide cart items
-//     nextRow.remove();
-//   } else {
-//     // Expand to show cart items
-//     try {
-//       const orderId = row.getAttribute("data-order-id");
-//       const response = await fetch(
-//         `${url}/Stores/${uid}/orders/${orderId}.json`
-//       );
-//       const order = await response.json();
-
-//       if (!order || !order.cart) {
-//         console.error("Order or cart is null or undefined.");
-//         return;
-//       }
-
-//       const cartItems = order.cart
-//         .map(
-//           (item) => `
-//                 <tr class="cart-item">
-//                     <td colspan="11">
-//                         <div style="display: flex; align-items: center; width: max-content;">
-//                             <img src="${item.photourl}" alt="${
-//             item.title
-//           }" style="width: auto; height: 80px; margin-right: 10px;" class="clickable-image pointer">
-//                             <div style="display: flex; flex-direction: column; gap: 5px;" >
-//                                 <p>${item.id}</p>
-//                                 <p>${item.brand}</p>
-//                                 <p>${item.productColor}</p>
-//                                 <p>${item.productSize}</p>
-//                                 <p>Qty: ${item.quantity}</p>
-//                                 <p>${
-//                                   parseFloat(item.price.replace(" EGP", "")) *
-//                                   item.quantity
-//                                 } EGP</p>
-
-//                             </div>
-//                         </div>
-//                     </td>
-//                 </tr>
-//             `
-//         )
-//         .join("");
-
-//       const detailsRow = document.createElement("tr");
-//       detailsRow.classList.add("order-details");
-//       detailsRow.innerHTML = `
-//                 <td colspan="11">
-//                     <table style="width: 100%;">
-//                         <tbody class="flex flex-wrap">
-//                             ${cartItems}
-//                         </tbody>
-//                     </table>
-//                 </td>
-//             `;
-//       row.after(detailsRow);
-
-//       // Attach click event to images
-//       document.querySelectorAll(".clickable-image").forEach((img) => {
-//         img.addEventListener("click", openModal);
-//       });
-//     } catch (error) {
-//       console.error("Error fetching order details:", error);
-//     }
-//   }
-// }
-
-// Modal handling functions
-
 async function toggleOrderDetails(event) {
   const row = event.currentTarget;
   const nextRow = row.nextElementSibling;
 
   // Check if the next row is already the details row
+  // if (nextRow && nextRow.classList.contains("order-details")) {
+  //   // Collapse to hide cart items
+  //   nextRow.remove();
+  // }
   if (nextRow && nextRow.classList.contains("order-details")) {
-    // Collapse to hide cart items
-    nextRow.remove();
+    // Set initial height for smooth transition
+    nextRow.style.height = `${nextRow.scrollHeight}px`; // Set to current height
+    nextRow.style.opacity = "1";
+    nextRow.style.transition = "height 0.6s ease-out, opacity 0.6s ease-out";
+
+    // Trigger the collapse transition
+    setTimeout(() => {
+      nextRow.style.height = "0";
+      nextRow.style.opacity = "0";
+    }, 15);
+
+    // Remove the row after the transition completes
+    nextRow.addEventListener(
+      "transitionend",
+      (event) => {
+        if (event.propertyName === "height" && nextRow.style.height === "0px") {
+          nextRow.remove();
+        }
+      },
+      { once: true }
+    );
+    row.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "start",
+    });
   } else {
+    disableInteractions(event);
     // Add wave loading effect
     row.classList.add("wave-loading");
 
@@ -729,7 +701,27 @@ async function toggleOrderDetails(event) {
           </table>
         </td>
       `;
+
+      // Set initial state for animation
+      detailsRow.style.maxHeight = "0";
+      detailsRow.style.opacity = "0";
+      detailsRow.style.overflow = "hidden";
+      detailsRow.style.transition =
+        "height 0.6s ease-out, opacity 0.6s ease-out";
+
       row.after(detailsRow);
+
+      // Trigger the transition after appending
+      setTimeout(() => {
+        detailsRow.style.maxHeight = `${detailsRow.scrollHeight}px`;
+        detailsRow.style.opacity = "1";
+      }, 15);
+      // Scroll to the first row both horizontally and vertically
+      row.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
 
       // Attach click event to images
       document.querySelectorAll(".clickable-image").forEach((img) => {
@@ -738,6 +730,7 @@ async function toggleOrderDetails(event) {
     } catch (error) {
       console.error("Error fetching order details:", error);
     } finally {
+      enableInteractions();
       // Remove the wave-loading effect after 2 seconds
       row.classList.remove("wave-loading");
     }
@@ -751,20 +744,28 @@ const span = document.getElementsByClassName("close")[0];
 
 function openModal(event) {
   event.stopPropagation(); // Prevent triggering row click event
-  modal.style.display = "block";
+  modal.classList.add("show", "flex", "column");
+  modalImg.style.background = "none"; // Removes background
   modalImg.src = event.target.src;
   captionText.innerHTML = event.target.alt;
 }
 
 span.onclick = function () {
-  modal.style.display = "none";
+  closeModal();
 };
 
 window.onclick = function (event) {
   if (event.target == modal) {
-    modal.style.display = "none";
+    closeModal();
   }
 };
+
+function closeModal() {
+  modal.classList.add("zoom-out"); // Add zoom-out animation
+  setTimeout(() => {
+    modal.classList.remove("show", "zoom-out"); // Remove after animation
+  }, 600); // Match animation-duration (0.6s)
+}
 
 function searchonmap(address, event) {
   event.stopPropagation(); // Prevents the row click event from being triggered
@@ -845,3 +846,195 @@ async function updateCustomerOrder(
     throw error; // Re-throw the error to be handled by the caller
   }
 }
+
+function showpendingOrders() {
+  document.getElementById("pending-orders-section").classList.remove("hidden");
+  document.getElementById("completed-orders-section").classList.add("hidden");
+  document.getElementById("Canceled-orders-section").classList.add("hidden");
+
+  // Update button styles
+  document.getElementById("show-pending-btn").style.backgroundColor =
+    "#6a64f142";
+  document.getElementById("show-completed-btn").style.backgroundColor = "";
+  document.getElementById("show-canceled-btn").style.backgroundColor = "";
+}
+function showCompletedOrders() {
+  const completedOrdersSection = document.getElementById(
+    "completed-orders-section"
+  );
+  const completedOrdersTableBody = document.getElementById(
+    "completed-orders-table-body"
+  );
+  const pendingOrdersSection = document.getElementById(
+    "pending-orders-section"
+  );
+  const canceledOrdersSection = document.getElementById(
+    "Canceled-orders-section"
+  );
+
+  // Toggle visibility
+  pendingOrdersSection.classList.add("hidden");
+  completedOrdersSection.classList.remove("hidden");
+  canceledOrdersSection.classList.add("hidden");
+
+  // Update button styles
+  document.getElementById("show-pending-btn").style.backgroundColor = "";
+  document.getElementById("show-completed-btn").style.backgroundColor =
+    "#6a64f142";
+  document.getElementById("show-canceled-btn").style.backgroundColor = "";
+
+  // Check if the completed orders table is empty
+}
+function showCanceledOrders() {
+  const canceledOrdersSection = document.getElementById(
+    "Canceled-orders-section"
+  );
+  const canceledOrdersTableBody = document.getElementById(
+    "Canceled-orders-table-body"
+  );
+  const pendingOrdersSection = document.getElementById(
+    "pending-orders-section"
+  );
+  const completedOrdersSection = document.getElementById(
+    "completed-orders-section"
+  );
+
+  // Toggle visibility
+  pendingOrdersSection.classList.add("hidden");
+  completedOrdersSection.classList.add("hidden");
+  canceledOrdersSection.classList.remove("hidden");
+
+  // Update button styles
+  document.getElementById("show-pending-btn").style.backgroundColor = "";
+  document.getElementById("show-completed-btn").style.backgroundColor = "";
+  document.getElementById("show-canceled-btn").style.backgroundColor =
+    "#6a64f142";
+
+  // Check if the canceled orders table is empty
+}
+$(document).ready(function () {
+  // Search functionality for all three sections
+  $("#sub-btn-del").click(function () {
+    const searchType = $("#category").val(); // Get selected search type
+    const searchValue = $("#product-id-input-del").val().toLowerCase(); // Get the search input value
+
+    if (searchValue === "") {
+      // Show SweetAlert with no confirm button
+      Swal.fire({
+        title: "Please enter a search term.",
+        icon: "warning",
+        toast: true,
+        position: "top-end", // Positions toast in the top right corner
+        showConfirmButton: false,
+        timer: 1500, // Automatically closes after 1.5 seconds
+        timerProgressBar: true, // Shows a progress bar
+      });
+
+      return;
+    }
+
+    let found = false;
+
+    // Hide all rows initially
+    $(
+      "#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr"
+    ).hide();
+    $(
+      "#pending-orders-section, #completed-orders-section, #Canceled-orders-section"
+    ).addClass("hidden");
+
+    // Determine where to search based on the selected type
+    let columnIndex;
+    switch (searchType) {
+      case "OrderID": // Order-ID
+        columnIndex = 0;
+        break;
+      case "Email": // Email
+        columnIndex = 2;
+        break;
+      case "Phone": // Phone-num
+        columnIndex = 5;
+        break;
+      default:
+        return;
+    }
+
+    // Search through each row in the tables
+    $(
+      "#orders-table-body tr, #completed-orders-table-body tr, #Canceled-orders-table-body tr"
+    ).each(function () {
+      const row = $(this);
+      const cellValue = row.find("td").eq(columnIndex).text().toLowerCase();
+
+      if (cellValue.includes(searchValue)) {
+        row.show(); // Show only the rows that match
+        found = true;
+
+        // Show the section where the result is found
+        if (row.closest("tbody").is("#orders-table-body")) {
+          $("#pending-orders-section").removeClass("hidden");
+          // Apply background color to the "Pending" button
+          $("#show-pending-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#completed-orders-table-body")) {
+          $("#completed-orders-section").removeClass("hidden");
+          // Apply background color to the "Completed" button
+          $("#show-completed-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        } else if (row.closest("tbody").is("#Canceled-orders-table-body")) {
+          $("#Canceled-orders-section").removeClass("hidden");
+          // Apply background color to the "Canceled" button
+          $("#show-canceled-btn")
+            .css("background-color", "#6a64f142")
+            .siblings()
+            .css("background-color", "");
+        }
+      }
+    });
+
+    if (!found) {
+      // Show SweetAlert with no confirm button
+      Swal.fire({
+        title: "No matching orders found.",
+        icon: "info",
+        toast: true,
+        position: "top-end", // Positions toast in the top right corner
+        showConfirmButton: false,
+        timer: 1500, // Automatically closes after 1.5 seconds
+        timerProgressBar: true, // Shows a progress bar
+      });
+    }
+  });
+
+  // Reset search functionality when input changes
+  $("#product-id-input-del").on("input", function () {
+    const searchValue = $(this).val();
+
+    if (searchValue === "") {
+      // Reset to show all orders (pending, completed, canceled)
+      $("#orders-table-body tr").show();
+      $("#completed-orders-table-body tr").show();
+      $("#Canceled-orders-table-body tr").show();
+
+      // Show all sections
+      $("#pending-orders-section").addClass("hidden");
+      $("#completed-orders-section").addClass("hidden");
+      $("#Canceled-orders-section").addClass("hidden");
+
+      $("#pending-orders-section").removeClass("hidden");
+
+      // Reset button background colors
+      $("#show-completed-btn,#show-pending-btn,#show-canceled-btn").css(
+        "background-color",
+        ""
+      );
+
+      // Clear the search input
+      $("#product-id-input-del").val("");
+    }
+  });
+});

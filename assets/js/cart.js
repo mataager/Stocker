@@ -87,6 +87,39 @@ function showMoreShippingData() {
     }
   }
 }
+// function fetchUserAddressAndRender() {
+//   // Ensure the user is authenticated
+//   firebase.auth().onAuthStateChanged(async (user) => {
+//     if (user) {
+//       try {
+//         // Get the user's ID token for secure database access
+//         const idToken = await user.getIdToken();
+
+//         // URL to the user's data
+//         const url = `https://matager-f1f00-default-rtdb.firebaseio.com/users/${user.uid}.json?auth=${idToken}`;
+
+//         // Fetch user data
+//         const response = await fetch(url);
+//         if (!response.ok) throw new Error("Failed to fetch user data.");
+
+//         const userData = await response.json();
+
+//         // Render addresses in the provided div
+//         if (userData && userData.address) {
+//           renderAddresses(userData.address);
+//         }
+//       } catch (error) {
+//         console.error("Error fetching user address:", error);
+//         Swal.fire({
+//           icon: "error",
+//           title: "Error",
+//           text: "Could not load your address data.",
+//         });
+//       }
+//     } else {
+//     }
+//   });
+// }
 function fetchUserAddressAndRender() {
   // Ensure the user is authenticated
   firebase.auth().onAuthStateChanged(async (user) => {
@@ -107,6 +140,8 @@ function fetchUserAddressAndRender() {
         // Render addresses in the provided div
         if (userData && userData.address) {
           renderAddresses(userData.address);
+        } else {
+          renderNoAddressesMessage();
         }
       } catch (error) {
         console.error("Error fetching user address:", error);
@@ -120,8 +155,9 @@ function fetchUserAddressAndRender() {
     }
   });
 }
-
 function renderAddresses(addresses) {
+  const preloader = document.getElementById("preloader2");
+  preloader.classList.add("hidden");
   const container = document.getElementById("address-area");
   container.innerHTML = ""; // Clear existing content
 
@@ -145,6 +181,10 @@ function renderAddresses(addresses) {
     }
 
     div.innerHTML = `
+    <button class="toggle-btn" onclick="toggleAddress(this, event)">
+    <p>show more</p>
+      <i class="fa-regular fa-circle-right"></i>
+    </button>
       <div class="details-row">
         <div class="detail-group">
           <h6>Governorate</h6>
@@ -186,6 +226,76 @@ function renderAddresses(addresses) {
     updateShippingFees();
   }
 }
+function toggleAddress(button, event) {
+  // Prevent parent card's click event
+  event.stopPropagation();
+
+  const addressCard = button.closest(".address-card");
+
+  if (!addressCard.classList.contains("expanded")) {
+    // Expand the card
+    const fullHeight = addressCard.scrollHeight; // Get the full height of the content
+    addressCard.style.height = `${fullHeight}px`; // Set the height explicitly
+    addressCard.classList.add("expanded");
+    button.innerHTML = '<p>Hide</p><i class="fa-regular fa-circle-down"></i>';
+  } else {
+    // Collapse the card
+    addressCard.style.height = "85px"; // Set the height to collapsed value
+    addressCard.classList.remove("expanded");
+    button.innerHTML =
+      '<p>Show More</p><i class="fa-regular fa-circle-right"></i>';
+  }
+}
+
+function renderNoAddressesMessage() {
+  // Show the preloader
+  const preloader = document.getElementById("preloader2");
+
+  preloader.classList.remove("hidden");
+
+  const container = document.getElementById("address-area");
+
+  const submitbtn = document.getElementById("Submit");
+
+  // Remove the 'onclick' attribute
+  submitbtn.removeAttribute("onclick");
+
+  // Clear the button text
+  submitbtn.innerText = "";
+
+  // Set new button text
+  submitbtn.innerText = "Must add address first !";
+  // Add click event to redirect to ./account
+  submitbtn.addEventListener("click", () => {
+    window.location.href = "./account.html";
+  });
+
+  // Clear existing content
+  container.innerHTML = "";
+
+  // Simulate a delay (remove this if no actual delay is needed)
+  setTimeout(() => {
+    // Create the no address message
+    const noAddressDiv = document.createElement("div");
+    noAddressDiv.classList.add("no-address-message");
+
+    noAddressDiv.innerHTML = `
+    <i class="bi bi-geo-alt-fill"></i>
+      <h5 class="elegant-message">No address found</h5>
+      <p>
+        Please <a href="./account.html" class="link-to-add">add an address</a> to submit your order.
+      </p>
+    `;
+
+    // Append the no address message to the container
+    container.appendChild(noAddressDiv);
+
+    // Hide the preloader after a short delay (to make sure the message is visible)
+    setTimeout(() => {
+      preloader.classList.add("hidden");
+    }, 200); // Short delay to ensure the message is shown
+  }, 1000); // Simulate the delay (adjust as needed)
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   const shippingFeesElement = document.getElementById("shipping-fees"); // Get the shipping fees element
@@ -199,8 +309,8 @@ document.addEventListener("DOMContentLoaded", function () {
         savedCity === "Giza" ||
         savedCity === "Alexandria"
       ) {
-        shippingFeesElement.innerText = "65 EGP";
-        localStorage.setItem("shippingFees", "65");
+        shippingFeesElement.innerText = "85 EGP";
+        localStorage.setItem("shippingFees", "85");
       } else {
         shippingFeesElement.innerText = "100 EGP";
         localStorage.setItem("shippingFees", "100");
@@ -215,3 +325,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Call the function when the DOM is ready
 document.addEventListener("DOMContentLoaded", fetchUserAddressAndRender);
+
+// Function to check if Free Shipping is applied
+function checkFreeShipping() {
+  const shippingFeesElementTotal = document.getElementById(
+    "shipping-fees-total"
+  );
+
+  if (
+    shippingFeesElementTotal &&
+    shippingFeesElementTotal.innerText.trim() === "Free Shipping"
+  ) {
+    Swal.fire({
+      title: "Yeah! You Got Free Shipping!",
+      text: "Enjoy your order with no extra shipping fees.",
+      imageUrl: "your-free-shipping-image.jpg", // Replace with your actual image URL
+      imageWidth: 200,
+      imageHeight: 200,
+      imageAlt: "Free Shipping",
+      confirmButtonText: "Awesome!",
+    });
+  }
+}
+
+// Run the function on page load
+document.addEventListener("DOMContentLoaded", checkFreeShipping);
+
+//

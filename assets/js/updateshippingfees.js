@@ -46,7 +46,8 @@ function updateShippingFees() {
   // Check if free shipping threshold is met
   if (cartTotal > freeshipping || totalCartAmount > freeshipping) {
     if (shippingFeesElement) shippingFeesElement.innerText = "0 EGP";
-    if (shippingFeesElementtotal) shippingFeesElementtotal.innerText = "0 EGP";
+    if (shippingFeesElementtotal)
+      shippingFeesElementtotal.innerText = "Free Shipping";
     localStorage.setItem("shippingFees", "0");
     return; // Exit early since no further calculation is needed
   }
@@ -73,9 +74,9 @@ function updateShippingFees() {
           "Ismailia",
         ].includes(savedGovernorate)
       ) {
-        shippingFeesElement.innerText = "65 EGP";
-        shippingFeesElementtotal.innerText = "65 EGP";
-        localStorage.setItem("shippingFees", "65");
+        shippingFeesElement.innerText = "85 EGP";
+        shippingFeesElementtotal.innerText = "85 EGP";
+        localStorage.setItem("shippingFees", "85");
       } else {
         shippingFeesElement.innerText = "100 EGP";
         shippingFeesElementtotal.innerText = "100 EGP";

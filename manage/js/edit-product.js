@@ -10,10 +10,8 @@ async function searchProduct() {
     .addEventListener("change", function () {
       if (this.checked) {
         this.setAttribute("bestseller", "true");
-        console.log("Best seller attribute set to true");
       } else {
         this.setAttribute("bestseller", "false");
-        console.log("Best seller attribute set to false");
       }
     });
 
@@ -71,22 +69,22 @@ async function searchProduct() {
       data["product-description"] || "";
     document.getElementById("mainimg1").src =
       data["product-photo"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
     document.getElementById("mainimg2").src =
       data["product-photo2"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
     document.getElementById("mainimg3").src =
       data["product-photo3"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
     document.getElementById("mainimg4").src =
       data["product-photo4"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
     document.getElementById("mainimg5").src =
       data["product-photo5"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
     document.getElementById("mainimg6").src =
       data["product-photo6"] ||
-      "https://i.imgur.com/Ob91UIr_d.webp?maxwidth=760&fidelity=grand";
+      "https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg";
 
     // Set Bestseller Switcher
     const bestsellerSwitcher = document.getElementById("BestsellerSwitcher");
@@ -148,7 +146,7 @@ async function searchProduct() {
               <i class="bi bi-arrows-angle-contract"></i>
               <i class="bi bi-arrows-angle-expand none"></i>
             </button>
-            <button type="button" style="border: none; margin-left:5px;margin-bottom:0px;" class="formbold-form-label point toggle-duplicate2 cus-btn">
+            <button title="duplicate this item" type="button" style="border: none; margin-left:5px;margin-bottom:0px;" class="formbold-form-label point toggle-duplicate2 cus-btn">
               <i class="bi bi-copy"></i>
             </button>
             <button type="button" style="border: none; margin-left:auto" class=" point no-bg-i toggle-delete2 ml-auto cus-btn">
@@ -183,42 +181,48 @@ async function searchProduct() {
             <div class="flex center flex-wrap mb-3">
               <div class="flex flex-column align-items">
                 <div class="drop-zone" id="dropZone1_p${count}" ondragover="handleDragOver2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                  <img id="editimg1_p${count}" src="${product.img1}" onclick="triggerFileSelect2(this)">
+                  <img id="editimg1_p${count}" src="${product.img1}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';"  onclick="triggerFileSelect2(this)">
                   <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+                  
                 </div>
               </div>
               <div class="flex flex-column align-items">
                 <div class="drop-zone" id="dropZone2_p${count}" ondragover="handleDragOver2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                  <img id="editimg2_p${count}" src="${product.img2}" onclick="triggerFileSelect2(this)">
+                  <img id="editimg2_p${count}" src="${product.img2}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';" onclick="triggerFileSelect2(this)">
                   <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+                  
                 </div>
               </div>
               
             <div class="flex flex-column align-items">
               <div class="drop-zone" id="dropZone3_p${count}" ondragover="handleDragOve2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                <img id="editimg3_p${count}" src="${product.img3}" onclick="triggerFileSelect2(this)">
+                <img id="editimg3_p${count}" src="${product.img3}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';" onclick="triggerFileSelect2(this)">
                 <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+              
               </div>
             </div>
 
             <div class="flex flex-column align-items">
               <div class="drop-zone" id="dropZone4_p${count}" ondragover="handleDragOver2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                <img id="editimg4_p${count}" src="${product.img4}" onclick="triggerFileSelect2(this)">
+                <img id="editimg4_p${count}" src="${product.img4}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';" onclick="triggerFileSelect2(this)">
                 <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+                
               </div>
             </div>
 
             <div class="flex flex-column align-items">
               <div class="drop-zone" id="dropZone5_p${count}" ondragover="handleDragOver2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                <img id="editimg5_p${count}" src="${product.img5}" onclick="triggerFileSelect2(this)">
+                <img id="editimg5_p${count}" src="${product.img5}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';" onclick="triggerFileSelect2(this)">
                 <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+               
               </div>
             </div>
 
             <div class="flex flex-column align-items">
               <div class="drop-zone" id="dropZone6_p${count}" ondragover="handleDragOver2(event, this)" ondragleave="handleDragLeave2(event, this)" ondrop="handleDrop2(event, this)" onclick="triggerFileSelect2(this)">
-                <img id="editimg6_p${count}" src="${product.img6}" onclick="triggerFileSelect2(this)">
+                <img id="editimg6_p${count}" src="${product.img6}" onerror="this.onerror=null; this.src='https://res.cloudinary.com/dqaz3mxb4/image/upload/v1737126547/Store1/No_Image_Available_glqgzc.jpg';" onclick="triggerFileSelect2(this)">
                 <input type="file" accept="image/*" class="hidden-file-input" onchange="handleFileSelect2(event, this.parentElement)">
+                
               </div>
             </div>
 
@@ -235,6 +239,8 @@ async function searchProduct() {
           </div>
         `;
 
+        // Call the function
+        fetchProductAndSizeChart();
         container.appendChild(newDiv);
         setupToggleExpand2(newDiv.querySelector(".toggle-expand2"));
         setupDeleteButton2(newDiv.querySelector(".toggle-delete2"));
@@ -263,6 +269,11 @@ async function searchProduct() {
 
 async function patchProduct() {
   const productId = document.getElementById("product-id-input").value.trim();
+
+  const sizeChartSelect = document.getElementById("size-chart-2");
+  const selectedOption = sizeChartSelect.options[sizeChartSelect.selectedIndex];
+
+  const selectedSizeChartUrl = selectedOption ? selectedOption.value : ""; // Get only selected or empty
 
   // Get the current user
   const user = firebase.auth().currentUser;
@@ -303,6 +314,7 @@ async function patchProduct() {
       category: document.getElementById("category-2").value,
       type: document.getElementById("Type-2").value,
       piece: document.getElementById("Piece-2").value,
+      "size-chart-url": selectedSizeChartUrl, // Add the selected size chart URL
       "product-description": document.getElementById("productdescription-2")
         .value,
     };
@@ -398,7 +410,6 @@ async function handleFileSelect2(event, dropZone) {
   const formData = new FormData();
   formData.append("image", file);
 
-  
   const preloader = document.createElement("div");
   preloader.classList.add("uploadloader");
   dropZone.appendChild(preloader);
@@ -414,43 +425,34 @@ async function handleFileSelect2(event, dropZone) {
   const count = dropZoneId.split("_").pop(); // Extract the count from the drop zone ID
 
   try {
-    const response = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: `Client-ID ${clientId}`,
-      },
-      body: formData,
-    });
-
-    const result = await response.json();
+    // Upload the image using Cloudinary
+    const result = await uploadToCloudinary(file, uploadPreset, cloudName);
     preloader.remove();
 
-    const imageUrl = result.data?.link;
     const uploadStatus = document.createElement("div");
     uploadStatus.classList.add("upload-status");
 
     if (result.success) {
+      const imageUrl = result.data?.link; // Retrieve the image URL
       dropZone.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto;">${fileselect}`;
-      uploadStatus.innerHTML = `<p><i class="bi bi-check-circle-fill blue-check"></i></p>`;
 
-      //   if (dropZoneId.includes("dropZone1")) {
-      //     document.getElementById(`img1_${count}`).value = imageUrl;
-      //   } else if (dropZoneId.includes("dropZone2")) {
-      //     document.getElementById(`img2_${count}`).value = imageUrl;
-      //   }
-      // } else {
-      //   uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
-      const dropZoneNumber = dropZoneId.match(/\d+/)[0]; // This extracts the number from the dropZoneId
+      const dropZoneNumber = dropZoneId.match(/\d+/)[0]; // Extract the number from dropZoneId
       if (dropZoneNumber >= 1 && dropZoneNumber <= 6) {
+        // Update the corresponding hidden input field
         document.getElementById(`img${dropZoneNumber}_${count}`).value =
           imageUrl;
-      } else {
-        uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
       }
+
+      uploadStatus.innerHTML = `<p><i class="bi bi-check-circle-fill blue-check"></i></p>`;
+    } else {
+      uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
     }
+
+    // Append upload status to the parent of the drop zone
     dropZone.parentElement.appendChild(uploadStatus);
   } catch (error) {
     preloader.remove();
+
     const uploadStatus = document.createElement("div");
     uploadStatus.classList.add("upload-status");
     uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${error.message}</p>`;
@@ -477,7 +479,6 @@ async function handleDrop2(event, dropZone) {
   const formData = new FormData();
   formData.append("image", files[0]);
 
-  
   const preloader = document.createElement("div");
   preloader.classList.add("uploadloader");
   dropZone.appendChild(preloader);
@@ -495,53 +496,34 @@ async function handleDrop2(event, dropZone) {
   const count = dropZoneId.split("_").pop(); // Extract the count from the drop zone ID
 
   try {
-    const response = await fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: `Client-ID ${clientId}`,
-      },
-      body: formData,
-    });
-
-    const result = await response.json();
+    // Upload the image using Cloudinary
+    const result = await uploadToCloudinary(file, uploadPreset, cloudName);
     preloader.remove();
 
-    const imageUrl = result.data?.link;
     const uploadStatus = document.createElement("div");
     uploadStatus.classList.add("upload-status");
 
     if (result.success) {
-      dropZone.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto;"> ${fileselect}`;
+      const imageUrl = result.data?.link; // Retrieve the image URL
+      dropZone.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto;">${fileselect}`;
 
-      uploadStatus.innerHTML = `<p><i class="bi bi-check-circle-fill blue-check"></i></p>`;
-
-      //   if (dropZoneId.includes("dropZone1")) {
-      //     document.getElementById(`img1_${count}`).value = imageUrl;
-      //   } else if (dropZoneId.includes("dropZone2")) {
-      //     document.getElementById(`img2_${count}`).value = imageUrl;
-      //   }
-      // } else {
-      //   uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
-      //   dropZone.parentElement.appendChild(uploadStatus);
-      // }
-      // dropZone.parentElement.appendChild(uploadStatus);
       const dropZoneNumber = dropZoneId.match(/\d+/)[0]; // Extract the number from dropZoneId
-
       if (dropZoneNumber >= 1 && dropZoneNumber <= 6) {
+        // Update the corresponding hidden input field
         document.getElementById(`img${dropZoneNumber}_${count}`).value =
           imageUrl;
-      } else {
-        const uploadStatus = document.createElement("div");
-        uploadStatus.classList.add("upload-status");
-        uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
-        dropZone.parentElement.appendChild(uploadStatus);
       }
 
-      // Append the upload status after processing
-      dropZone.parentElement.appendChild(uploadStatus);
+      uploadStatus.innerHTML = `<p><i class="bi bi-check-circle-fill blue-check"></i></p>`;
+    } else {
+      uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${result.data.error}</p>`;
     }
+
+    // Append upload status to the parent of the drop zone
+    dropZone.parentElement.appendChild(uploadStatus);
   } catch (error) {
     preloader.remove();
+
     const uploadStatus = document.createElement("div");
     uploadStatus.classList.add("upload-status");
     uploadStatus.innerHTML = `<p><i class="bi bi-x-circle-fill red-check"></i></p><p class="hidden">${error.message}</p>`;
@@ -579,7 +561,7 @@ document.getElementById("add-more2").addEventListener("click", function () {
         <i class="bi bi-arrows-angle-contract no-bg-i"></i>
         <i class="bi bi-arrows-angle-expand no-bg-i none"></i>
       </button>
-      <button type="button" style="border: none; margin-left:5px;margin-bottom:0px;" class="formbold-form-label point toggle-duplicate2 cus-btn">
+      <button title="duplicate this item" type="button" style="border: none; margin-left:5px;margin-bottom:0px;" class="formbold-form-label point toggle-duplicate2 cus-btn">
         <i class="bi bi-copy"></i>
       </button>
       <button type="button" style="border: none; margin-left:auto" class=" point no-bg-i toggle-delete2 ml-auto cus-btn">
@@ -871,27 +853,37 @@ function updateElementIds2(container) {
   });
 }
 
-//change the main images for the product which show first
-// Function to handle file input change
-function handleFileChange(event, imgId) {
+async function handleFileChange(event, imgId) {
   const file = event.target.files[0];
+
   if (file) {
-    // Upload the image to Imgur and get the URL
-    uploadImageToImgur(file)
-      .then((imgUrl) => {
+    try {
+      // Upload the image to Cloudinary
+      const uploadResponse = await uploadToCloudinary(
+        file,
+        uploadPreset,
+        cloudName
+      );
+
+      if (uploadResponse.success) {
+        const imgUrl = uploadResponse.data.link;
+
         // Update the image source with the new URL
         document.getElementById(imgId).src = imgUrl;
 
-        // Call the function to update Firebase with new image URLs
+        // Call the function to update Firebase with the new image URLs
         updateMainProductImages();
-      })
-      .catch((error) => {
-        console.error("Error uploading image:", error);
-      });
+      } else {
+        console.error("Error uploading image:", uploadResponse.data.error);
+      }
+    } catch (error) {
+      console.error("Error during image upload:", error);
+    }
+  } else {
+    console.error("No file selected for upload");
   }
 }
 
-// Function to handle updating main product images
 async function updateMainProductImages() {
   const productId = document.getElementById("product-id-input").value.trim();
 
@@ -909,7 +901,7 @@ async function updateMainProductImages() {
         title: "swal2-custom",
       },
     });
-    return; // Exit if the user is not authenticated
+    return;
   }
 
   if (!productId) {
@@ -930,7 +922,6 @@ async function updateMainProductImages() {
   const fileInput5 = document.getElementById("fileInput5").files[0];
   const fileInput6 = document.getElementById("fileInput6").files[0];
 
-  // Validate file inputs
   if (
     !fileInput1 &&
     !fileInput2 &&
@@ -952,24 +943,52 @@ async function updateMainProductImages() {
     // Get the ID token of the authenticated user
     const idToken = await user.getIdToken();
 
-    // Upload images to Imgur
+    const uploadImage = async (file, imgElement) => {
+      if (!file) return null; // Return null if no file is provided
+
+      // Create a preloader
+      const preloader = document.createElement("div");
+      preloader.classList.add("uploadloader");
+      imgElement.parentElement.appendChild(preloader); // Add preloader in the image container
+
+      const uploadResult = await uploadToCloudinary(
+        file,
+        uploadPreset,
+        cloudName
+      );
+
+      if (!uploadResult.success) throw new Error(uploadResult.data.error);
+
+      // Wait for the image to load before removing the preloader
+      const imageUrl = uploadResult.data.link;
+      const img = new Image();
+      img.src = imageUrl;
+
+      // Remove the preloader once the image is fully loaded
+      img.onload = () => {
+        preloader.remove(); // Remove preloader when image is loaded
+      };
+
+      return imageUrl;
+    };
+
     const imgUrl1 = fileInput1
-      ? await uploadImageToImgur(fileInput1)
+      ? await uploadImage(fileInput1, document.getElementById("mainimg1"))
       : document.getElementById("mainimg1").src;
     const imgUrl2 = fileInput2
-      ? await uploadImageToImgur(fileInput2)
+      ? await uploadImage(fileInput2, document.getElementById("mainimg2"))
       : document.getElementById("mainimg2").src;
     const imgUrl3 = fileInput3
-      ? await uploadImageToImgur(fileInput3)
+      ? await uploadImage(fileInput3, document.getElementById("mainimg3"))
       : document.getElementById("mainimg3").src;
     const imgUrl4 = fileInput4
-      ? await uploadImageToImgur(fileInput4)
+      ? await uploadImage(fileInput4, document.getElementById("mainimg4"))
       : document.getElementById("mainimg4").src;
     const imgUrl5 = fileInput5
-      ? await uploadImageToImgur(fileInput5)
+      ? await uploadImage(fileInput5, document.getElementById("mainimg5"))
       : document.getElementById("mainimg5").src;
     const imgUrl6 = fileInput6
-      ? await uploadImageToImgur(fileInput6)
+      ? await uploadImage(fileInput6, document.getElementById("mainimg6"))
       : document.getElementById("mainimg6").src;
 
     // Prepare data for Firebase
@@ -1017,30 +1036,50 @@ async function updateMainProductImages() {
     Swal.fire({
       icon: "error",
       title: "Failed to Update Images",
+      text: error.message,
       showConfirmButton: false,
       timer: 1500,
     });
   }
 }
 
-// Function to upload an image to Imgur and return the URL
-function uploadImageToImgur(file) {
-   // Your Imgur Client ID
-  const formData = new FormData();
-  formData.append("image", file);
+const fetchProductAndSizeChart = async () => {
+  try {
+    // Fetch size chart data
+    const sizeChartResponse = await fetch(
+      `${url}/Stores/${uid}/sizecharts.json`
+    );
+    const sizeChartData = await sizeChartResponse.json();
+    // Get the select element
+    const selectElement = document.getElementById("size-chart-2");
 
-  return fetch("https://api.imgur.com/3/image", {
-    method: "POST",
-    headers: {
-      Authorization: `Client-ID ${clientId}`,
-    },
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => data.data.link) // Returns the image URL
-    .catch((error) => {
-      console.error("Error uploading to Imgur:", error);
-      throw error;
+    // Clear existing options except the first one
+    selectElement.innerHTML = `<option value="" disabled selected>Size Charts</option>`;
+
+    // Check if size charts exist
+    if (sizeChartData) {
+      Object.entries(sizeChartData).forEach(([id, chart]) => {
+        const option = document.createElement("option");
+        option.value = chart.sizeChartUrl;
+        option.setAttribute("data-id", id);
+        option.textContent = chart.chartName;
+        selectElement.appendChild(option);
+      });
+    }
+
+    // Add event listener to handle selection
+    selectElement.addEventListener("click", function () {
+      const selectedOption = this.options[this.selectedIndex];
+
+      // Remove 'selected' attribute from all options
+      Array.from(this.options).forEach((opt) => {
+        opt.removeAttribute("selected");
+      });
+
+      // Set 'selected' attribute to the clicked option
+      selectedOption.setAttribute("selected", "selected");
     });
-}
-//
+  } catch (error) {
+    console.error("Error fetching size charts:", error);
+  }
+};
